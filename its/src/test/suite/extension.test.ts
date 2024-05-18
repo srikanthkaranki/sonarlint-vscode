@@ -26,11 +26,11 @@ suite('Extension Test Suite', () => {
   });
 
   test('Extension should be present', () => {
-    assert.ok(vscode.extensions.getExtension('sonarsource.sonarlint-vscode'));
+    assert.ok(vscode.extensions.getExtension('RiversideSoftware.sonarlint-abl'));
   });
 
   test('should report issue on single js file', async function () {
-    const ext = vscode.extensions.getExtension('sonarsource.sonarlint-vscode')!;
+    const ext = vscode.extensions.getExtension('RiversideSoftware.sonarlint-abl')!;
     await ext.activate();
 
     vscode.commands.executeCommand('SonarLint.ShowSonarLintOutput');
@@ -50,7 +50,7 @@ suite('Extension Test Suite', () => {
   }).timeout(60 * 1000);
 
   test('should report issue on single yaml file', async function () {
-    const ext = vscode.extensions.getExtension('sonarsource.sonarlint-vscode')!;
+    const ext = vscode.extensions.getExtension('RiversideSoftware.sonarlint-abl')!;
     await ext.activate();
 
     vscode.commands.executeCommand('SonarLint.ShowSonarLintOutput');

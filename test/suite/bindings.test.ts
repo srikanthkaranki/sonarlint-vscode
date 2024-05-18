@@ -24,7 +24,7 @@ import { SharedConnectedModeSettingsService } from '../../src/connected/sharedCo
 import { selectFirstQuickPickItem } from './commons';
 
 const CONNECTED_MODE_SETTINGS_SONARQUBE = 'connectedMode.connections.sonarqube';
-const SONARLINT_CATEGORY = 'sonarlint';
+const SONARLINT_CATEGORY = 'sonarlint-abl';
 const BINDING_SETTINGS = 'connectedMode.project';
 
 const TEST_SONARQUBE_CONNECTION = {

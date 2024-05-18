@@ -21,7 +21,7 @@ import { DONT_ASK_AGAIN_ACTION } from '../util/showMessage';
 import { SharedConnectedModeSettingsService } from './sharedConnectedModeSettingsService';
 import OPEN_BROWSER = Commands.OPEN_BROWSER;
 
-const SONARLINT_CATEGORY = 'sonarlint';
+const SONARLINT_CATEGORY = 'sonarlint-abl';
 const BINDING_SETTINGS = 'connectedMode.project';
 const OPEN_FOLDER_ACTION = 'Open Folder';
 const BIND_MANUALLY_ACTION = 'Bind Manually';

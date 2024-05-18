@@ -52,7 +52,7 @@ export class NewCodeDefinitionService {
       VSCode.window.showQuickPick([{ label: toggleLabel }, { label: `Learn how to deliver clean code with Clean as You Code` }])
         .then(async item => {
           if (item.label === toggleLabel) {
-            await VSCode.workspace.getConfiguration('sonarlint')
+            await VSCode.workspace.getConfiguration('sonarlint-abl')
               .update('focusOnNewCode', !this.focusOnNewCode, VSCode.ConfigurationTarget.Global);
           }
           if (item.label === `Learn how to deliver clean code with Clean as You Code`) {
@@ -60,7 +60,7 @@ export class NewCodeDefinitionService {
           }
         });
     }));
-    this.focusOnNewCode = VSCode.workspace.getConfiguration().get('sonarlint.focusOnNewCode', false);
+    this.focusOnNewCode = VSCode.workspace.getConfiguration().get('sonarlint-abl.focusOnNewCode', false);
     this.newCodeStatusBarItem = VSCode.window.createStatusBarItem(VSCode.StatusBarAlignment.Left, 0);
 
     this.newCodeStatusBarItem.command = Commands.NEW_CODE_DEFINITION;

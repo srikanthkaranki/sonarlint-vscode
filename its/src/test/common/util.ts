@@ -52,7 +52,7 @@ function sleep(ms: number): Promise<void> {
 }
 
 export async function activateAndShowOutput() {
-  const ext = vscode.extensions.getExtension('sonarsource.sonarlint-vscode');
+  const ext = vscode.extensions.getExtension('RiversideSoftware.sonarlint-abl');
   await ext?.activate();
 
   vscode.commands.executeCommand('SonarLint.ShowSonarLintOutput');

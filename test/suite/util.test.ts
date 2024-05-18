@@ -90,7 +90,7 @@ suite('util', () => {
     expect(fileUris.length).to.equal(9);
     expect(analysisFiles.length).to.equal(8);
     let inlineAnalysisResult = analysisFiles[0].text.replace(/(\r\n|\n|\r)/gm, '');
-    expect(inlineAnalysisResult).to.equal('{    "sonarlint.testFilePattern": "**/test/samples/**/test/**",' +
+    expect(inlineAnalysisResult).to.equal('{    "sonarlint-abl.testFilePattern": "**/test/samples/**/test/**",' +
       '    "telemetry.enableTelemetry": false}');
     expect(analysisFiles[0].uri.endsWith('settings.json')).to.be.true;
     expect(analysisFiles[0].languageId).to.equal('[unknown]');

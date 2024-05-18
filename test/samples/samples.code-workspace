@@ -14,7 +14,7 @@
     }
   ],
   "settings": {
-    "sonarlint.testFilePattern": "**/test/samples/**/test/**",
+    "sonarlint-abl.testFilePattern": "**/test/samples/**/test/**",
     "telemetry.enableTelemetry": false
   }
 }

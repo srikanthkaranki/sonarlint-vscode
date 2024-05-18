@@ -46,7 +46,7 @@ export async function checkUpdateNow(context: vscode.ExtensionContext, statusBar
 async function checkUpdate(statusBar: StatusBar, context: vscode.ExtensionContext) {
   const dogfoodInfo = await getDogfoodInfo(context);
   if (dogfoodInfo?.version && dogfoodInfo?.url) {
-    const installedSonarLint = vscode.extensions.getExtension('SonarSource.sonarlint-vscode');
+    const installedSonarLint = vscode.extensions.getExtension('RiversideSoftware.sonarlint-abl');
     if (reinstallationNeeded(dogfoodInfo, installedSonarLint)) {
       await updateAvailable(dogfoodInfo, installedSonarLint, statusBar, context);
     }

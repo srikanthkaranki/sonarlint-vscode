@@ -16,7 +16,7 @@ import { code2ProtocolConverter } from './uri';
 import { verboseLogToSonarLintOutput } from './logging';
 import { BindingService } from '../connected/binding';
 
-const ANALYSIS_EXCLUDES = 'sonarlint.analysisExcludesStandalone';
+const ANALYSIS_EXCLUDES = 'sonarlint-abl.analysisExcludesStandalone';
 
 export function startedInDebugMode(process: NodeJS.Process): boolean {
   const args = process.execArgv;
@@ -26,7 +26,7 @@ export function startedInDebugMode(process: NodeJS.Process): boolean {
   return false;
 }
 
-export const extension = vscode.extensions.getExtension('SonarSource.sonarlint-vscode');
+export const extension = vscode.extensions.getExtension('RiversideSoftware.sonarlint-abl');
 export const packageJson = extension.packageJSON;
 export const HOTSPOTS_FULL_SCAN_FILE_SIZE_LIMIT_BYTES = 500_000;
 

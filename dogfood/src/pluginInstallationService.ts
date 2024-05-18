@@ -21,7 +21,7 @@ export async function installAndRestart(version: string,
                                         context: vscode.ExtensionContext) {
   if (installedSonarLint) {
     statusBar.setStatus(Status.UNINSTALLING);
-    await (vscode.commands.executeCommand('workbench.extensions.uninstallExtension', 'SonarSource.sonarlint-vscode'));
+    await (vscode.commands.executeCommand('workbench.extensions.uninstallExtension', 'RiversideSoftware.sonarlint-abl'));
   }
   statusBar.setStatus(Status.DOWNLOADING);
   const vsixUri = await downloadVsix(version, url, context);

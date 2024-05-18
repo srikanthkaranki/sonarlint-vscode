@@ -11,7 +11,7 @@ import { ConnectionSettingsService, migrateConnectedModeSettings } from './conne
 
 let currentConfig: vscode.WorkspaceConfiguration;
 
-export const SONARLINT_CATEGORY = 'sonarlint';
+export const SONARLINT_CATEGORY = 'sonarlint-abl';
 export const VERBOSE_LOGS = 'output.showVerboseLogs';
 
 export function getSonarLintConfiguration(): vscode.WorkspaceConfiguration {

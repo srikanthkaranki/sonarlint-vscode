@@ -38,6 +38,7 @@ import {
 } from './hotspot/hotspots';
 import { AllHotspotsTreeDataProvider, HotspotNode, HotspotTreeViewItem } from './hotspot/hotspotsTreeDataProvider';
 import { getJavaConfig, installClasspathListener } from './java/java';
+import { getOpenEdgeConfig } from './openedge/openedge';
 import { LocationTreeItem, navigateToLocation, SecondaryLocationsTree } from './location/locations';
 import { SonarLintExtendedLanguageClient } from './lsp/client';
 import * as protocol from './lsp/protocol';
@@ -168,7 +169,7 @@ export async function activate(context: VSCode.ExtensionContext) {
   const clientOptions: LanguageClientOptions = {
     documentSelector: DOCUMENT_SELECTOR,
     synchronize: {
-      configurationSection: 'sonarlint',
+      configurationSection: 'sonarlint-abl',
       fileEvents: [pythonWatcher, sharedConnectedModeConfigurationWatcher]
     },
     uriConverters: {
@@ -178,13 +179,13 @@ export async function activate(context: VSCode.ExtensionContext) {
     diagnosticCollectionName: 'sonarlint',
     initializationOptions: () => {
       return {
-        productKey: 'vscode',
+        productKey: 'vscode-cabl',
         telemetryStorage: Path.resolve(context.extensionPath, '..', 'sonarlint_usage'),
-        productName: 'SonarLint VSCode',
+        productName: 'CABL - SonarLint VSCode',
         productVersion: util.packageJson.version,
         workspaceName: VSCode.workspace.name,
         firstSecretDetected: isFirstSecretDetected(context),
-        showVerboseLogs: VSCode.workspace.getConfiguration().get('sonarlint.output.showVerboseLogs', false),
+        showVerboseLogs: VSCode.workspace.getConfiguration().get('sonarlint-abl.output.showVerboseLogs', false),
         platform: getPlatform(),
         architecture: process.arch,
         additionalAttributes: {
@@ -198,7 +199,7 @@ export async function activate(context: VSCode.ExtensionContext) {
           omnisharpDirectory: Path.resolve(context.extensionPath, 'omnisharp')
         },
         enableNotebooks: true,
-        clientNodePath: VSCode.workspace.getConfiguration().get('sonarlint.pathToNodeExecutable'),
+        clientNodePath: VSCode.workspace.getConfiguration().get('sonarlint-abl.pathToNodeExecutable'),
       };
     },
     outputChannel: getLogOutput(),
@@ -206,7 +207,7 @@ export async function activate(context: VSCode.ExtensionContext) {
   };
 
   // Create the language client and start the client.
-  // id parameter is used to load 'sonarlint.trace.server' configuration
+  // id parameter is used to load 'sonarlint-abl.trace.server' configuration
   languageClient = new SonarLintExtendedLanguageClient(
     'sonarlint',
     'SonarLint Language Server',
@@ -251,7 +252,7 @@ export async function activate(context: VSCode.ExtensionContext) {
   context.subscriptions.push(allRulesView);
 
   secondaryLocationsTree = new SecondaryLocationsTree();
-  issueLocationsView = VSCode.window.createTreeView('SonarLint.IssueLocations', {
+  issueLocationsView = VSCode.window.createTreeView('SonarLint-abl.IssueLocations', {
     treeDataProvider: secondaryLocationsTree
   });
   context.subscriptions.push(issueLocationsView);
@@ -261,14 +262,14 @@ export async function activate(context: VSCode.ExtensionContext) {
   context.subscriptions.push(languageClient.onNotification(ShowIssueNotification.type, IssueService.showIssue));
 
   VSCode.workspace.onDidChangeConfiguration(async event => {
-    if (event.affectsConfiguration('sonarlint.rules')) {
+    if (event.affectsConfiguration('sonarlint-abl.rules')) {
       allRulesTreeDataProvider.refresh();
       setRulesViewMessage(allRulesView);
     }
-    if (event.affectsConfiguration('sonarlint.connectedMode')) {
+    if (event.affectsConfiguration('sonarlint-abl.connectedMode')) {
       allConnectionsTreeDataProvider.refresh();
     }
-    if (event.affectsConfiguration('sonarlint.focusOnNewCode')) {
+    if (event.affectsConfiguration('sonarlint-abl.focusOnNewCode')) {
       NewCodeDefinitionService.instance.updateFocusOnNewCodeState();
     }
   });
@@ -298,12 +299,6 @@ export async function activate(context: VSCode.ExtensionContext) {
   });
 
   context.subscriptions.push(allHotspotsView);
-
-  helpAndFeedbackTreeDataProvider = new HelpAndFeedbackTreeDataProvider();
-  helpAndFeedbackView = VSCode.window.createTreeView('SonarLint.HelpAndFeedback', {
-    treeDataProvider: helpAndFeedbackTreeDataProvider
-  });
-  context.subscriptions.push(helpAndFeedbackView);
 
   context.subscriptions.push(onConfigurationChange());
 
@@ -344,7 +339,7 @@ function suggestBinding(params: protocol.SuggestBindingParams) {
 
 function registerCommands(context: VSCode.ExtensionContext) {
   context.subscriptions.push(
-    VSCode.commands.registerCommand('SonarLint.OpenSample', async () => {
+    VSCode.commands.registerCommand('SonarLint.ABL.OpenSample', async () => {
       const sampleFileUri = VSCode.Uri.joinPath(context.extensionUri, 'walkthrough', 'sample.py');
       const sampleDocument = await VSCode.workspace.openTextDocument(sampleFileUri);
       await VSCode.window.showTextDocument(sampleDocument, VSCode.ViewColumn.Beside);
@@ -436,9 +431,9 @@ function registerCommands(context: VSCode.ExtensionContext) {
     VSCode.commands.registerCommand(Commands.SHOW_HOTSPOT_DESCRIPTION, showHotspotDescription)
   );
 
-  context.subscriptions.push(
-    VSCode.commands.registerCommand(Commands.CONFIGURE_COMPILATION_DATABASE, configureCompilationDatabase)
-  );
+  // context.subscriptions.push(
+  //   VSCode.commands.registerCommand(Commands.CONFIGURE_COMPILATION_DATABASE, configureCompilationDatabase)
+  // );
 
   context.subscriptions.push(
     VSCode.commands.registerCommand(Commands.CONNECT_TO_SONARQUBE, () => connectToSonarQube(context)())
@@ -565,6 +560,7 @@ function installCustomRequestHandlers(context: VSCode.ExtensionContext) {
   languageClient.onRequest(protocol.GetTokenForServer.type, serverId => getTokenForServer(serverId));
 
   languageClient.onRequest(protocol.GetJavaConfigRequest.type, fileUri => getJavaConfig(languageClient, fileUri));
+  languageClient.onRequest(protocol.GetOpenEdgeConfigRequest.type, fileUri => getOpenEdgeConfig(languageClient, fileUri));
   languageClient.onRequest(protocol.ScmCheckRequest.type, fileUri => isIgnoredByScm(fileUri));
   languageClient.onRequest(protocol.ShouldAnalyseFileCheck.type, params => shouldAnalyseFile(params.uri));
   languageClient.onRequest(protocol.FilterOutExcludedFiles.type, params =>
@@ -591,7 +587,7 @@ function installCustomRequestHandlers(context: VSCode.ExtensionContext) {
     VSCode.commands.executeCommand(Commands.OPEN_SETTINGS, JAVA_HOME_CONFIG)
   );
   languageClient.onNotification(protocol.OpenPathToNodeSettingsNotification.type, () =>
-    VSCode.commands.executeCommand(Commands.OPEN_SETTINGS, 'sonarlint.pathToNodeExecutable')
+    VSCode.commands.executeCommand(Commands.OPEN_SETTINGS, 'sonarlint-abl.pathToNodeExecutable')
   );
   languageClient.onNotification(protocol.BrowseToNotification.type, browseTo =>
     VSCode.commands.executeCommand(Commands.OPEN_BROWSER, VSCode.Uri.parse(browseTo))

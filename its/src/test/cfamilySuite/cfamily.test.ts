@@ -33,7 +33,7 @@ describe('CFamily Test Suite', () => {
 
   it('should detect compilation database correctly', async () => {
 
-    const ext = vscode.extensions.getExtension('sonarsource.sonarlint-vscode')!;
+    const ext = vscode.extensions.getExtension('RiversideSoftware.sonarlint-abl')!;
     await ext.activate();
     const fileUri = vscode.Uri.file(path.join(__dirname, sampleCFamilyFolderLocation, 'main.cpp'));
     const document = await vscode.workspace.openTextDocument(fileUri);

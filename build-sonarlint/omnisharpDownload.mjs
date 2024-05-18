@@ -74,7 +74,7 @@ export async function downloadAndExtractOmnisharp(omnisharpVersion, omnisharpDis
 }
 
 export async function downloadOmnisharpAllPlatformDistributions(omnisharpVersion) {
-  await downloadAndExtractOmnisharp(omnisharpVersion, 'mono');
-  await downloadAndExtractOmnisharp(omnisharpVersion, 'net472');
-  await downloadAndExtractOmnisharp(omnisharpVersion, 'net6');
+  // await downloadAndExtractOmnisharp(omnisharpVersion, 'mono');
+  // await downloadAndExtractOmnisharp(omnisharpVersion, 'net472');
+  // await downloadAndExtractOmnisharp(omnisharpVersion, 'net6');
 }

@@ -25,7 +25,7 @@ import { sleep } from '../testutil';
 
 const CONNECTED_MODE_SETTINGS_SONARQUBE = 'connectedMode.connections.sonarqube';
 const CONNECTED_MODE_SETTINGS_SONARCLOUD = 'connectedMode.connections.sonarcloud';
-const SONARLINT_CATEGORY = 'sonarlint';
+const SONARLINT_CATEGORY = 'sonarlint-abl';
 const BINDING_SETTINGS = 'connectedMode.project';
 
 const TEST_SONARQUBE_CONNECTION = {

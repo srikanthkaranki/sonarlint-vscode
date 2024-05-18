@@ -96,6 +96,10 @@ export namespace GetJavaConfigRequest {
   export const type = new lsp.RequestType<string, GetJavaConfigResponse, void>('sonarlint/getJavaConfig');
 }
 
+export namespace GetOpenEdgeConfigRequest {
+  export const type = new lsp.RequestType<string, GetOpenEdgeConfigResponse, void>('sonarlint/getOpenEdgeConfig');
+}
+
 export namespace ScmCheckRequest {
   export const type = new lsp.RequestType<string, boolean, void>('sonarlint/isIgnoredByScm');
 }
@@ -110,6 +114,24 @@ export interface GetJavaConfigResponse {
   classpath: string[];
   isTest: boolean;
   vmLocation: string;
+}
+
+export interface GetOpenEdgeConfigResponse {
+  projectInfo: GetOpenEdgeProjectResponse;
+  sourceDir: string;
+  buildDir: string;
+  rcode: string;
+  xref: string;
+}
+
+export interface GetOpenEdgeProjectResponse {
+  projectRoot: string;
+  sourceDir: string;
+  buildDir: string;
+  propath: string;
+  rcodeCache: string;
+  propathRCodeCache: string;
+  schemaCache: string;
 }
 
 export namespace ShowSonarLintOutputNotification {

@@ -53,7 +53,7 @@ export class AllRulesTreeDataProvider implements VSCode.TreeDataProvider<AllRule
   constructor(private readonly allRulesProvider: () => Thenable<RulesResponse>) {}
 
   async getChildren(node: AllRulesNode) {
-    const localRuleConfig = VSCode.workspace.getConfiguration('sonarlint.rules');
+    const localRuleConfig = VSCode.workspace.getConfiguration('sonarlint-abl.rules');
     return this.getAllRules()
       .then(response => {
         Object.keys(response).forEach(language => response[language].sort(byName));
@@ -64,7 +64,7 @@ export class AllRulesTreeDataProvider implements VSCode.TreeDataProvider<AllRule
         if (node) {
           return response[node.label as string]
             .map(rule => {
-              rule.levelFromConfig = localRuleConfig.get(rule.key, {})['level'];
+              rule.levelFromConfig = localRuleConfig.get(rule.key.replace(/\./gi, "_"), {})['level'];
               return rule;
             })
             .filter(r => {
@@ -169,10 +169,10 @@ export function toggleRule(level: ConfigLevel) {
       const { key, activeByDefault } = ruleKey.rule;
       if ((level === 'on' && !activeByDefault) || (level === 'off' && activeByDefault)) {
         // Override default
-        rules[key] = { level };
+        rules[key.replace(/\./gi, "_")] = { level };
       } else {
         // Back to default
-        rules[key] = undefined;
+        rules[key.replace(/\./gi, "_")] = undefined;
       }
       return configuration.update('rules', rules, VSCode.ConfigurationTarget.Global);
     }

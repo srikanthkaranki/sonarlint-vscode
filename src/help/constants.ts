@@ -19,7 +19,7 @@ export const helpAndFeedbackItems: HelpAndFeedbackItem[] = [
     command: {
       command: 'workbench.action.openWalkthrough',
       title: 'Welcome to SonarLint!',
-      arguments: ['SonarSource.sonarlint-vscode#SonarLint.walkthrough', false]
+      arguments: ['RiversideSoftware.sonarlint-abl#SonarLint.walkthrough', false]
     }
   },
   {
@@ -32,7 +32,7 @@ export const helpAndFeedbackItems: HelpAndFeedbackItem[] = [
   {
     id: 'getHelp',
     label: 'Get Help | Report Issue',
-    url: 'https://community.sonarsource.com/c/sl/vs-code/36',
+    url: 'https://github.com/Riverside-Software/sonar-openedge/issues',
     icon: 'comment-discussion',
     viewItem: true
   },
@@ -63,13 +63,6 @@ export const helpAndFeedbackItems: HelpAndFeedbackItem[] = [
     url: 'https://community.sonarsource.com/t/frequently-asked-questions/7204',
     icon: 'question',
     viewItem: true
-  },
-  {
-    id: 'sonarCloudProductPage',
-    label: 'SonarCloud',
-    url: 'https://www.sonarsource.com/products/sonarcloud/',
-    icon: 'n/a',
-    viewItem: false
   },
   {
     id: 'sonarQubeProductPage',

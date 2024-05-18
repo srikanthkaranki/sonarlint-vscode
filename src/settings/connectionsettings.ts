@@ -12,7 +12,7 @@ import { SonarLintExtendedLanguageClient } from '../lsp/client';
 import { logToSonarLintOutput } from '../util/logging';
 import { ConnectionCheckResult } from '../lsp/protocol';
 
-const SONARLINT_CATEGORY = 'sonarlint';
+const SONARLINT_CATEGORY = 'sonarlint-abl';
 const CONNECTIONS_SECTION = 'connectedMode.connections';
 const SONARQUBE = 'sonarqube';
 const SONARCLOUD = 'sonarcloud';
@@ -176,19 +176,20 @@ export class ConnectionSettingsService {
   }
 
   getSonarCloudConnections(): SonarCloudConnection[] {
-    return VSCode.workspace
+    return [];
+    /*VSCode.workspace
       .getConfiguration(SONARLINT_CATEGORY)
-      .get<SonarCloudConnection[]>(`${CONNECTIONS_SECTION}.${SONARCLOUD}`);
+      .get<SonarCloudConnection[]>(`${CONNECTIONS_SECTION}.${SONARCLOUD}`);*/
   }
 
   setSonarCloudConnections(scConnections: SonarCloudConnection[]) {
-    VSCode.workspace
+    /* VSCode.workspace
       .getConfiguration()
-      .update(SONARCLOUD_CONNECTIONS_CATEGORY, scConnections, VSCode.ConfigurationTarget.Global);
+      .update(SONARCLOUD_CONNECTIONS_CATEGORY, scConnections, VSCode.ConfigurationTarget.Global); */
   }
 
   async addSonarCloudConnection(connection: SonarCloudConnection) {
-    const connections = this.getSonarCloudConnections();
+    /* const connections = this.getSonarCloudConnections();
     const newConnection: SonarCloudConnection = { organizationKey: connection.organizationKey };
     if (connection.connectionId !== undefined) {
       newConnection.connectionId = connection.connectionId;
@@ -202,11 +203,11 @@ export class ConnectionSettingsService {
       .getConfiguration()
       .update(SONARCLOUD_CONNECTIONS_CATEGORY, connections, VSCode.ConfigurationTarget.Global);
 
-    return newConnection.connectionId;  
+    return newConnection.connectionId; */
   }
 
   async updateSonarCloudConnection(connection: SonarCloudConnection) {
-    const connections = this.getSonarCloudConnections();
+    /* const connections = this.getSonarCloudConnections();
     const connectionToUpdate = connections.find(c => c.connectionId === connection.connectionId);
     if (!connectionToUpdate) {
       throw new Error(`Could not find connection '${connection.connectionId}' to update`);
@@ -224,7 +225,7 @@ export class ConnectionSettingsService {
     delete connectionToUpdate.token;
     VSCode.workspace
       .getConfiguration()
-      .update(SONARCLOUD_CONNECTIONS_CATEGORY, connections, VSCode.ConfigurationTarget.Global);
+      .update(SONARCLOUD_CONNECTIONS_CATEGORY, connections, VSCode.ConfigurationTarget.Global); */
   }
 
   async addTokensFromSettingsToSecureStorage(

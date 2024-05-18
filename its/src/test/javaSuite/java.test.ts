@@ -23,7 +23,7 @@ suite('Java Test Suite', () => {
 
   suiteSetup('Ensure readiness of extension and Java LS', async function () {
     this.timeout(JAVA_LS_TIMEOUT_MILLIS);
-    assert.ok(vscode.extensions.getExtension('sonarsource.sonarlint-vscode'), 'Extension did not load');
+    assert.ok(vscode.extensions.getExtension('RiversideSoftware.sonarlint-abl'), 'Extension did not load');
     const javaExtension = vscode.extensions.getExtension('redhat.java');
     assert.ok(javaExtension, 'Java extension did not load');
     const javaExtensionApi = javaExtension?.exports;

@@ -51,7 +51,7 @@ suite('Connected Mode Test Suite', () => {
       .getConfiguration('sonarlint')
       .update(CONNECTED_MODE_SETTINGS, undefined, vscode.ConfigurationTarget.Global);
     await vscode.workspace
-      .getConfiguration('sonarlint', sampleFolderUri)
+      .getConfiguration('sonarlint-abl', sampleFolderUri)
       .update('connectedMode.project', undefined, vscode.ConfigurationTarget.WorkspaceFolder);
     await vscode.commands.executeCommand('workbench.action.closeAllEditors');
   });
@@ -100,7 +100,7 @@ suite('Connected Mode Test Suite', () => {
         .getConfiguration('sonarlint')
         .update(CONNECTED_MODE_SETTINGS_SONARQUBE, testSQConfig, vscode.ConfigurationTarget.Global);
       await vscode.workspace
-        .getConfiguration('sonarlint', sampleFolderUri)
+        .getConfiguration('sonarlint-abl', sampleFolderUri)
         .update('connectedMode.project', { projectKey: 'projectKey1' }, vscode.ConfigurationTarget.WorkspaceFolder);
 
       const underTest = new AllConnectionsTreeDataProvider(mockClient);
