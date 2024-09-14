@@ -16,7 +16,7 @@ import { Commands } from '../util/commands';
 
 export function assistCreatingConnection(context: vscode.ExtensionContext) {
   return async (assistCreatingConnectionParams: AssistCreatingConnectionParams) => {
-    let newConnectionId: string | null;
+    let newConnectionId: string | void;
     try {
       newConnectionId = await confirmConnectionDetailsAndSave(context)(
         assistCreatingConnectionParams.isSonarCloud,
