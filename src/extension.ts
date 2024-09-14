@@ -12,10 +12,10 @@ import * as VSCode from 'vscode';
 import { LanguageClientOptions, StreamInfo } from 'vscode-languageclient/node';
 import { configureCompilationDatabase, notifyMissingCompileCommands } from './cfamily/cfamily';
 import { AutoBindingService } from './connected/autobinding';
+import { assistCreatingConnection } from './connected/assistCreatingConnection';
 import { BindingService, showSoonUnsupportedVersionMessage } from './connected/binding';
 import { AllConnectionsTreeDataProvider } from './connected/connections';
 import {
-  assistCreatingConnection,
   connectToSonarCloud,
   connectToSonarQube,
   editSonarCloudConnection,
@@ -161,8 +161,10 @@ export async function activate(context: VSCode.ExtensionContext) {
   const serverOptions = () => runJavaServer(context);
 
   const pythonWatcher = VSCode.workspace.createFileSystemWatcher('**/*.py');
+  const helmWatcher = VSCode.workspace.createFileSystemWatcher('**/*.{y?ml,tpl,txt,toml}');
   const sharedConnectedModeConfigurationWatcher = VSCode.workspace.createFileSystemWatcher('**/.sonarlint/*.json');
   context.subscriptions.push(pythonWatcher);
+  context.subscriptions.push(helmWatcher);
   context.subscriptions.push(sharedConnectedModeConfigurationWatcher);
 
   // Options to control the language client
@@ -170,7 +172,7 @@ export async function activate(context: VSCode.ExtensionContext) {
     documentSelector: DOCUMENT_SELECTOR,
     synchronize: {
       configurationSection: 'sonarlint-abl',
-      fileEvents: [pythonWatcher, sharedConnectedModeConfigurationWatcher]
+      fileEvents: [pythonWatcher, helmWatcher, sharedConnectedModeConfigurationWatcher]
     },
     uriConverters: {
       code2Protocol: code2ProtocolConverter,
@@ -613,7 +615,7 @@ function installCustomRequestHandlers(context: VSCode.ExtensionContext) {
   languageClient.onRequest(protocol.SslCertificateConfirmation.type, cert =>
     showSslCertificateConfirmationDialog(cert)
   );
-  languageClient.onRequest(protocol.AssistCreatingConnection.type, assistCreatingConnection(context))
+  languageClient.onRequest(protocol.AssistCreatingConnection.type, assistCreatingConnection(context));
   languageClient.onNotification(protocol.ShowSoonUnsupportedVersionMessage.type, params =>
     showSoonUnsupportedVersionMessage(params, context.workspaceState)
   );

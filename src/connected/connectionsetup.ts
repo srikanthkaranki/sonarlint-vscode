@@ -8,8 +8,9 @@
 
 import * as vscode from 'vscode';
 
-import { Commands } from '../util/commands';
+import { BindingService } from './binding';
 import { Connection } from './connections';
+import { DEFAULT_CONNECTION_ID } from '../commons';
 import { BindingCreationMode, ConnectionCheckResult, Organization } from '../lsp/protocol';
 import {
   ConnectionSettingsService,
@@ -17,11 +18,9 @@ import {
   SonarCloudConnection,
   SonarQubeConnection
 } from '../settings/connectionsettings';
+import { Commands } from '../util/commands';
 import * as util from '../util/util';
 import { escapeHtml, ResourceResolver } from '../util/webview';
-import { DEFAULT_CONNECTION_ID } from '../commons';
-import { BindingService } from './binding';
-import TRIGGER_HELP_AND_FEEDBACK_LINK = Commands.TRIGGER_HELP_AND_FEEDBACK_LINK;
 
 let connectionSetupPanel: vscode.WebviewPanel;
 
@@ -34,88 +33,16 @@ const SAVE_CONNECTION_COMMAND = 'saveConnection';
 const ORGANIZATION_LIST_RECEIVED_COMMAND = 'organizationListReceived';
 
 const SONARQUBE_DESCRIPTION =
-  "An <b>open-source, self-managed</b> tool that easily integrates into the developers' CI/CD pipeline" +
-  '<br>' +
-  'and DevOps platform to systematically help developers and organizations deliver Clean Code.\n' +
-  '<br><br>' +
-  'SonarQube offers a free <a id="sonarQubeEditionsDownloads" href="#">Community Edition</a>';
+  `An <b>open-source, self-managed</b> tool that easily integrates into the developers' CI/CD pipeline<br>
+  and DevOps platform to systematically help developers and organizations deliver Clean Code.
+  <br><br>
+  SonarQube offers a free <a id="sonarQubeEditionsDownloads" href="#">Community Edition</a>`;
+
 const SONARCLOUD_DESCRIPTION =
-  'A <b>Software-as-a-Service (SaaS)</b> tool that easily integrates into the cloud DevOps platforms' +
-  '<br>' +
-  'and extends the CI/CD workflow to systematically help developers and organizations deliver Clean Code.\n' +
-  '<br><br>' +
-  '<a id="sonarCloudProductPage" href="#">SonarCloud</a> is entirely free for open-source projects.';
-
-export function assistCreatingConnection(context: vscode.ExtensionContext) {
-  return async assistCreatingConnectionParams => {
-    return { newConnectionId: await confirmConnectionDetailsAndSave(context)(assistCreatingConnectionParams.isSonarCloud, assistCreatingConnectionParams.serverUrlOrOrganisationKey, assistCreatingConnectionParams.token) }
-  };
-}
-
-interface ConnectionConfirmationResponse {
-  confirmed: boolean;
-  cancelled: boolean;
-}
-
-async function confirmConnection(isSonarCloud : boolean, serverUrlOrOrganizationKey: string, token: string) : Promise<ConnectionConfirmationResponse> {
-  const connectionType = isSonarCloud ? 'SonarCloud organization' : 'SonarQube server';
-  let manualConnectionMessage = `Connecting SonarLint to ${isSonarCloud ? 'SonarCloud' : 'SonarQube'} will enable issues to be opened directly in your IDE. It will also allow you to apply the same Clean Code standards as your team, analyze more languages, detect more issues, receive notifications about the quality gate status, and more.
-      \nEnsure that the requesting ${isSonarCloud ? 'organization' : 'server URL'} '${serverUrlOrOrganizationKey}' matches your ${connectionType}.`;
-
-  if (!isSonarCloud) {
-    manualConnectionMessage += ` Letting SonarLint connect to an untrusted SonarQube server is potentially dangerous. If you don't trust this server, we recommend canceling this action and manually setting up Connected Mode.`
-  }
-
-  const automaticConnectionMessage = `${manualConnectionMessage}
-      \nA token will be automatically generated to allow access to your ${connectionType}.`
-
-  const yesOption = `Connect to this ${connectionType}`;
-  const learnMoreOption = 'What is Connected Mode?'
-  const result = await vscode.window.showWarningMessage(
-    `Do you trust this ${connectionType}?`,
-    { modal: true, detail: token ? automaticConnectionMessage : manualConnectionMessage },
-    yesOption,
-    learnMoreOption
-  );
-  return {
-    confirmed : result === yesOption,
-    cancelled : result === undefined
-  };
-}
-
-
-export function confirmConnectionDetailsAndSave(context: vscode.ExtensionContext) {
-  return async (isSonarCloud: boolean, serverUrlOrOrganizationKey: string, token: string) => {
-    const reply = await confirmConnection(isSonarCloud, serverUrlOrOrganizationKey, token);
-    if (reply.confirmed) {
-      if (token) {
-        const connection = isSonarCloud ? {
-          token,
-          connectionId: serverUrlOrOrganizationKey,
-          disableNotifications: false,
-          organizationKey: serverUrlOrOrganizationKey
-        } as SonarCloudConnection : {
-          token,
-          connectionId: serverUrlOrOrganizationKey,
-          disableNotifications: false,
-          serverUrl: serverUrlOrOrganizationKey
-        } as SonarQubeConnection;
-
-        return isSonarCloud ?
-          await ConnectionSettingsService.instance.addSonarCloudConnection(connection as SonarCloudConnection) :
-          await ConnectionSettingsService.instance.addSonarQubeConnection(connection as SonarQubeConnection);
-      } else if (!token && !isSonarCloud) {
-        // old flow for SonarQube
-        connectToSonarQube(context)(serverUrlOrOrganizationKey);
-        return null;
-      }
-    } else if (!reply.confirmed && !reply.cancelled) {
-      vscode.commands.executeCommand(TRIGGER_HELP_AND_FEEDBACK_LINK, 'connectedModeDocs');
-      return null;
-    }
-    return null;
-  }
-}
+  `A <b>Software-as-a-Service (SaaS)</b> tool that easily integrates into the cloud DevOps platforms<br>
+  and extends the CI/CD workflow to systematically help developers and organizations deliver Clean Code.
+  <br><br>
+  <a id="sonarCloudProductPage" href="#">SonarCloud</a> is entirely free for open-source projects.`;
 
 export function connectToSonarQube(context: vscode.ExtensionContext) {
   return (serverUrl='', projectKey='', isFromSharedConfiguration=false, folderUri?: vscode.Uri) => {
@@ -438,11 +365,11 @@ export async function handleMessageWithConnectionSettingsService(
       break;
     case SONARCLOUD_PRODUCT_LINK_COMMAND:
       delete message.command;
-      vscode.commands.executeCommand(TRIGGER_HELP_AND_FEEDBACK_LINK, 'sonarCloudProductPage');
+      vscode.commands.executeCommand(Commands.TRIGGER_HELP_AND_FEEDBACK_LINK, 'sonarCloudProductPage');
       break;
     case SONARQUBE_EDITIONS_DOWNLOAD_LINK_COMMAND:
       delete message.command;
-      vscode.commands.executeCommand(TRIGGER_HELP_AND_FEEDBACK_LINK, 'sonarQubeEditionsDownloads');
+      vscode.commands.executeCommand(Commands.TRIGGER_HELP_AND_FEEDBACK_LINK, 'sonarQubeEditionsDownloads');
       break;
     case TOKEN_CHANGED_COMMAND:
       delete message.command;

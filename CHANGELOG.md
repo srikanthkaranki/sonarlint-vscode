@@ -1,3 +1,15 @@
+## 4.10
+
+* Update text and secrets analyzer 2.13 -> [2.14](https://sonarsource.atlassian.net/issues/?jql=fixVersion%20=%2015846%20ORDER%20BY%20created%20ASC) -> [2.15](https://sonarsource.atlassian.net/issues/?jql=fixVersion%20%3D%2015894%20ORDER%20BY%20created%20ASC), FP fixes, improvements
+* Update PHP analyzer 3.36 -> [3.37](https://github.com/SonarSource/sonar-php/releases/tag/3.37.0.12086), FP and bug fixes, improvements
+* Update Python analyzer 3.19 -> [3.20](https://sonarsource.atlassian.net/issues/?jql=fixVersion%20=%2015724%20ORDER%20BY%20created%20ASC) -> [3.21](https://sonarsource.atlassian.net/issues/?jql=fixVersion%20=%2015883%20ORDER%20BY%20created%20ASC), FP and bug fixes, improvements, framework detection improvements, performance improvements
+* Update CFamily analyzer 6.57 -> [6.58](https://sonarsource.atlassian.net/issues/?jql=fixVersion%20=%2015814%20ORDER%20BY%20created%20ASC), support for C23, FP fixes
+* Update C# analyzer 9.30 -> [9.31](https://github.com/SonarSource/sonar-dotnet/releases/tag/9.31.0.96804) -> [9.32](https://github.com/SonarSource/sonar-dotnet/releases/tag/9.32.0.97167), FP fixes, one rule deprecated
+
+## 4.9
+
+* Update IaC analyzer 1.32 -> [1.33](https://github.com/SonarSource/sonar-iac/releases/tag/1.33.0.11761) -> [1.33.1](https://github.com/SonarSource/sonar-iac/releases/tag/1.33.1.11833), new rules for Helm charts
+
 ## 4.8
 
 * Update IaC analyzer 1.31 -> [1.32](https://github.com/SonarSource/sonar-iac/releases/tag/1.32.0.11383), new rules for Kubernetes, improvements and bug fixes

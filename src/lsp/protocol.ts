@@ -583,7 +583,7 @@ export interface SetIssueStatusParams {
 
 export interface AssistCreatingConnectionParams {
   isSonarCloud: boolean;
-  serverUrl: string;
+  serverUrlOrOrganisationKey: string;
   token: string;
 }
 
