@@ -514,7 +514,7 @@
       },
       {
         "view": "SonarLint.ConnectedMode",
-        "contents": "[Connected Mode](command:SonarLint.HelpAndFeedbackLinkClicked?%22connectedModeDocs%22) links SonarLint to SonarQube or SonarCloud to apply the same Clean Code standards as your team.\n\n[Add SonarQube Connection](command:SonarLint.ABL.ConnectToSonarQube)\n\nAnalyze more languages, detect more issues on the whole project, receive notifications about the quality gate status, and more.\n\nQuality Profiles and file exclusion settings defined on the server are shared between all connected users."
+        "contents": "[Connected Mode](command:SonarLint.ABL.HelpAndFeedbackLinkClicked?%22connectedModeDocs%22) links SonarLint to SonarQube or SonarCloud to apply the same Clean Code standards as your team.\n\n[Add SonarQube Connection](command:SonarLint.ABL.ConnectToSonarQube)\n\nAnalyze more languages, detect more issues on the whole project, receive notifications about the quality gate status, and more.\n\nQuality Profiles and file exclusion settings defined on the server are shared between all connected users."
       },
       {
         "view": "SonarLint.SecurityHotspots",
