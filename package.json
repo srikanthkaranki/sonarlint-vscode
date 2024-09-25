@@ -26,7 +26,7 @@
     "Code Analysis"
   ],
   "activationEvents": [
-    "onStartupFinished"
+    "workspaceContains:openedge-project.json"
   ],
   "capabilities": {
     "virtualWorkspaces": false
