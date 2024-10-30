@@ -35,7 +35,7 @@ export class RuleNode extends VSCode.TreeItem {
     this.id = rule.key.toUpperCase();
     this.description = `${actualLevel(rule)}`;
     this.command = {
-      command: 'SonarLint.OpenStandaloneRuleDesc',
+      command: 'SonarLint.ABL.OpenStandaloneRuleDesc',
       title: 'Show Description',
       arguments: [rule.key]
     };

@@ -141,7 +141,7 @@ Please make sure that the right folder is open and bound to the right project on
 
       if (issue.shouldOpenRuleDescription) {
         await VSCode.commands.executeCommand(
-          'SonarLint.OpenRuleDescCodeAction',
+          'SonarLint.ABL.OpenRuleDescCodeAction',
           issue.ruleKey,
           code2ProtocolConverter(documentUri),
           ''
