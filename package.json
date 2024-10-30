@@ -2,7 +2,7 @@
   "name": "sonarlint-abl",
   "displayName": "SonarLint for ABL",
   "description": "Linter to detect & fix coding issues locally in ABL. Use with SonarQube for optimal team performance.",
-  "version": "4.10.99003",
+  "version": "4.11.99001",
   "icon": "images/sonarlint_wave_128px.png",
   "publisher": "RiversideSoftware",
   "homepage": "https://riverside-software.fr/",
@@ -210,7 +210,7 @@
           "order": 13,
           "type": "string",
           "default": "",
-          "markdownDescription": "Files whose name match this [glob pattern](https://docs.oracle.com/javase/tutorial/essential/io/fileOps.html#glob) will not be processed by analyzers. In [Connected Mode](command:SonarLint.ABL.HelpAndFeedbackLinkClicked?%22connectedModeDocs%22) with SonarQube, this property will be ignored and server exclusion settings will be applied. No rules are evaluated on excluded files. Example: `**/lib/**,**/*generated*`",
+          "markdownDescription": "Files whose name match this [glob pattern](https://docs.oracle.com/javase/tutorial/essential/io/fileOps.html#glob) will not be processed by analyzers. In [Connected Mode](command:SonarLint.HelpAndFeedbackLinkClicked?%22connectedModeDocs%22) with SonarQube or SonarCloud, this property will be ignored and the server's exclusion settings will be applied. No rules are evaluated on excluded files. Example: `**/lib/**,**/*generated*`",
           "scope": "resource"
         },
         "sonarlint-abl.ls.javaHome": {
