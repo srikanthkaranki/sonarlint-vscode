@@ -333,58 +333,58 @@
         "command": "SonarLint.ABL.DeactivateRule",
         "title": "Deactivate",
         "icon": "$(x)",
-        "enablement": "view == SonarLint.AllRules"
+        "enablement": "view == SonarLint-abl.AllRules"
       },
       {
         "command": "SonarLint.ABL.ActivateRule",
         "title": "Activate",
         "icon": "$(check)",
-        "enablement": "view == SonarLint.AllRules"
+        "enablement": "view == SonarLint-abl.AllRules"
       },
       {
         "command": "SonarLint.ABL.ResetDefaultRule",
         "title": "Reset",
-        "enablement": "view == SonarLint.AllRules"
+        "enablement": "view == SonarLint-abl.AllRules"
       },
       {
         "command": "SonarLint.ABL.ShowAllRules",
         "title": "All",
-        "enablement": "view == SonarLint.AllRules"
+        "enablement": "view == SonarLint-abl.AllRules"
       },
       {
         "command": "SonarLint.ABL.ShowActiveRules",
         "title": "Active",
-        "enablement": "view == SonarLint.AllRules"
+        "enablement": "view == SonarLint-abl.AllRules"
       },
       {
         "command": "SonarLint.ABL.ShowInactiveRules",
         "title": "Inactive",
-        "enablement": "view == SonarLint.AllRules"
+        "enablement": "view == SonarLint-abl.AllRules"
       },
       {
         "command": "SonarLint.ABL.ScanForHotspotsInFolder",
         "title": "In Whole Folder",
-        "enablement": "view == SonarLint.SecurityHotspots && SonarLint.Hotspots.ShowMode == 'OpenFiles'"
+        "enablement": "view == SonarLint-abl.SecurityHotspots && SonarLint.Hotspots.ShowMode == 'OpenFiles'"
       },
       {
         "command": "SonarLint.ABL.ShowHotspotsInOpenFiles",
         "title": "In Open Files",
-        "enablement": "view == SonarLint.SecurityHotspots && SonarLint.Hotspots.ShowMode == 'Folder'"
+        "enablement": "view == SonarLint-abl.SecurityHotspots && SonarLint.Hotspots.ShowMode == 'Folder'"
       },
       {
         "command": "SonarLint.ABL.FindRuleByKey",
         "title": "Find Rule By Key",
-        "enablement": "view == SonarLint.AllRules"
+        "enablement": "view == SonarLint-abl.AllRules"
       },
       {
         "command": "SonarLint.ABL.ClearLocations",
         "title": "Clear",
-        "enablement": "view == SonarLint-abl.IssueLocations || view == SonarLint.SecurityHotspots"
+        "enablement": "view == SonarLint-abl.IssueLocations || view == SonarLint-abl.SecurityHotspots"
       },
       {
         "command": "SonarLint.ABL.ClearHotspotLocations",
         "title": "Clear Highlighting",
-        "enablement": "view == SonarLint.SecurityHotspots"
+        "enablement": "view == SonarLint-abl.SecurityHotspots"
       },
       {
         "command": "SonarLint.ABL.ConnectToSonarQube",
@@ -397,65 +397,65 @@
         "title": "Edit SonarQube Connection",
         "category": "ABL SonarLint",
         "icon": "$(pencil)",
-        "enablement": "view == SonarLint.ConnectedMode"
+        "enablement": "view == SonarLint-abl.ConnectedMode"
       },
       {
         "command": "SonarLint.ABL.AddProjectBinding",
         "title": "Add Project Binding",
         "category": "ABL SonarLint",
         "icon": "$(plus)",
-        "enablement": "view == SonarLint.ConnectedMode"
+        "enablement": "view == SonarLint-abl.ConnectedMode"
       },
       {
         "command": "SonarLint.ABL.RemoveConnection",
         "title": "Remove Connection",
         "category": "ABL SonarLint",
         "icon": "$(trash)",
-        "enablement": "view == SonarLint.ConnectedMode"
+        "enablement": "view == SonarLint-abl.ConnectedMode"
       },
       {
         "command": "SonarLint.ABL.EditProjectBinding",
         "title": "Edit Project Binding",
         "category": "ABL SonarLint",
         "icon": "$(pencil)",
-        "enablement": "view == SonarLint.ConnectedMode"
+        "enablement": "view == SonarLint-abl.ConnectedMode"
       },
       {
         "command": "SonarLint.ABL.RemoveProjectBinding",
         "title": "Remove Project Binding",
         "category": "ABL SonarLint",
         "icon": "$(trash)",
-        "enablement": "view == SonarLint.ConnectedMode"
+        "enablement": "view == SonarLint-abl.ConnectedMode"
       },
       {
         "command": "SonarLint.ABL.OpenHotspotOnServer",
         "title": "Review on Server",
         "category": "ABL SonarLint",
-        "enablement": "view == SonarLint.SecurityHotspots && viewItem == knownHotspotItem"
+        "enablement": "view == SonarLint-abl.SecurityHotspots && viewItem == knownHotspotItem"
       },
       {
         "command": "SonarLint.ABL.ShowHotspotRuleDescription",
         "title": "Show Rule Description",
         "category": "ABL SonarLint",
-        "enablement": "view == SonarLint.SecurityHotspots && viewItem == newHotspotItem"
+        "enablement": "view == SonarLint-abl.SecurityHotspots && viewItem == newHotspotItem"
       },
       {
         "command": "SonarLint.ABL.ShowHotspotDetails",
         "title": "Show Hotspot Details",
         "category": "ABL SonarLint",
-        "enablement": "view == SonarLint.SecurityHotspots && (viewItem == knownHotspotItem || viewItem == remoteHotspotItem)"
+        "enablement": "view == SonarLint-abl.SecurityHotspots && (viewItem == knownHotspotItem || viewItem == remoteHotspotItem)"
       },
       {
         "command": "SonarLint.ABL.HideHotspot",
         "title": "Hide Security Hotspot",
         "category": "ABL SonarLint",
-        "enablement": "view == SonarLint.SecurityHotspots && viewItem == remoteHotspotItem"
+        "enablement": "view == SonarLint-abl.SecurityHotspots && viewItem == remoteHotspotItem"
       },
       {
         "command": "SonarLint.ABL.ChangeHotspotStatus",
         "title": "Change Status",
         "category": "ABL SonarLint",
-        "enablement": "view == SonarLint.SecurityHotspots && viewItem == knownHotspotItem"
+        "enablement": "view == SonarLint-abl.SecurityHotspots && viewItem == knownHotspotItem"
       },
       {
         "command": "SonarLint.ABL.HelpAndFeedbackLinkClicked",
@@ -472,14 +472,14 @@
         "title": "Share Connected Mode Configuration",
         "category": "ABL SonarLint",
         "icon": "$(export)",
-        "enablement": "view == SonarLint.ConnectedMode"
+        "enablement": "view == SonarLint-abl.ConnectedMode"
       }
     ],
     "viewsContainers": {
       "activitybar": [
         {
           "icon": "images/sonarlint.svg",
-          "id": "SonarLint",
+          "id": "SonarLintABL",
           "title": "SonarLint - ABL"
         }
       ]
@@ -491,17 +491,17 @@
           "name": "SonarLint Issue Locations"
         }
       ],
-      "SonarLint": [
+      "SonarLintABL": [
         {
-          "id": "SonarLint.AllRules",
+          "id": "SonarLint-abl.AllRules",
           "name": "Rules"
         },
         {
-          "id": "SonarLint.ConnectedMode",
+          "id": "SonarLint-abl.ConnectedMode",
           "name": "Connected Mode"
         },
         {
-          "id": "SonarLint.SecurityHotspots",
+          "id": "SonarLint-abl.SecurityHotspots",
           "name": "Security Hotspots",
           "visibility": "collapsed"
         }
@@ -513,11 +513,11 @@
         "contents": "No locations to show.\nUse \"Show all locations\" code action from a SonarLint issue."
       },
       {
-        "view": "SonarLint.ConnectedMode",
+        "view": "SonarLint-abl.ConnectedMode",
         "contents": "[Connected Mode](command:SonarLint.ABL.HelpAndFeedbackLinkClicked?%22connectedModeDocs%22) links SonarLint to SonarQube or SonarCloud to apply the same Clean Code standards as your team.\n\n[Add SonarQube Connection](command:SonarLint.ABL.ConnectToSonarQube)\n\nAnalyze more languages, detect more issues on the whole project, receive notifications about the quality gate status, and more.\n\nQuality Profiles and file exclusion settings defined on the server are shared between all connected users."
       },
       {
-        "view": "SonarLint.SecurityHotspots",
+        "view": "SonarLint-abl.SecurityHotspots",
         "contents": "Please ensure a connection to [SonarQube](command:SonarLint.ABL.HelpAndFeedbackLinkClicked?%22sonarQubeProductPage%22) 9.9+ is set up. Detected Security Hotspots will be displayed here. [Learn More](https://docs.sonarsource.com/sonarlint/vs-code/using-sonarlint/security-hotspots).\n Using the In Whole Folder feature may consume excessive resources depending on the size of your project. Please check the [documentation](https://docs.sonarsource.com/sonarlint/vs-code/using-sonarlint/security-hotspots/#reporting-security-hotspots-in-the-whole-folder) for recommendations to minimize the impact of a full project analysis."
       }
     ],
@@ -557,7 +557,7 @@
               "markdown": "walkthrough/empty.md"
             },
             "completionEvents": [
-              "onView:SonarLint.ConnectedMode"
+              "onView:SonarLint-abl.ConnectedMode"
             ]
           },
           {
@@ -576,32 +576,32 @@
       "view/title": [
         {
           "command": "SonarLint.ABL.ShowAllRules",
-          "when": "view == SonarLint.AllRules",
+          "when": "view == SonarLint-abl.AllRules",
           "group": "navigation"
         },
         {
           "command": "SonarLint.ABL.ShowActiveRules",
-          "when": "view == SonarLint.AllRules",
+          "when": "view == SonarLint-abl.AllRules",
           "group": "navigation"
         },
         {
           "command": "SonarLint.ABL.ShowInactiveRules",
-          "when": "view == SonarLint.AllRules",
+          "when": "view == SonarLint-abl.AllRules",
           "group": "navigation"
         },
         {
           "command": "SonarLint.ABL.ScanForHotspotsInFolder",
-          "when": "view == SonarLint.SecurityHotspots",
+          "when": "view == SonarLint-abl.SecurityHotspots",
           "group": "navigation"
         },
         {
           "command": "SonarLint.ABL.ShowHotspotsInOpenFiles",
-          "when": "view == SonarLint.SecurityHotspots",
+          "when": "view == SonarLint-abl.SecurityHotspots",
           "group": "navigation"
         },
         {
           "command": "SonarLint.ABL.FindRuleByKey",
-          "when": "view == SonarLint.AllRules"
+          "when": "view == SonarLint-abl.AllRules"
         },
         {
           "command": "SonarLint.ABL.ClearLocations",
@@ -610,92 +610,92 @@
         },
         {
           "command": "SonarLint.ABL.ConnectToSonarQube",
-          "when": "view == SonarLint.ConnectedMode",
+          "when": "view == SonarLint-abl.ConnectedMode",
           "group": "inline"
         }
       ],
       "view/item/context": [
         {
           "command": "SonarLint.ABL.DeactivateRule",
-          "when": "view == SonarLint.AllRules && viewItem == rule-on",
+          "when": "view == SonarLint-abl.AllRules && viewItem == rule-on",
           "group": "inline"
         },
         {
           "command": "SonarLint.ABL.ActivateRule",
-          "when": "view == SonarLint.AllRules && viewItem == rule-off",
+          "when": "view == SonarLint-abl.AllRules && viewItem == rule-off",
           "group": "inline"
         },
         {
           "command": "SonarLint.ABL.ConnectToSonarQube",
-          "when": "view == SonarLint.ConnectedMode && viewItem == sonarQubeGroup",
+          "when": "view == SonarLint-abl.ConnectedMode && viewItem == sonarQubeGroup",
           "group": "inline"
         },
         {
           "command": "SonarLint.ABL.EditSonarQubeConnection",
           "title": "Edit",
-          "when": "view == SonarLint.ConnectedMode && viewItem == sonarqubeConnection",
+          "when": "view == SonarLint-abl.ConnectedMode && viewItem == sonarqubeConnection",
           "group": "inline"
         },
         {
           "command": "SonarLint.ABL.AddProjectBinding",
           "title": "Add Project Binding",
-          "when": "view == SonarLint.ConnectedMode && viewItem == sonarqubeConnection",
+          "when": "view == SonarLint-abl.ConnectedMode && viewItem == sonarqubeConnection",
           "group": "inline"
         },
         {
           "command": "SonarLint.ABL.RemoveConnection",
           "title": "Remove",
-          "when": "view == SonarLint.ConnectedMode && viewItem == sonarqubeConnection",
+          "when": "view == SonarLint-abl.ConnectedMode && viewItem == sonarqubeConnection",
           "group": "inline"
         },
         {
           "command": "SonarLint.ABL.EditProjectBinding",
           "title": "Edit",
-          "when": "view == SonarLint.ConnectedMode && viewItem == workspaceFolder",
+          "when": "view == SonarLint-abl.ConnectedMode && viewItem == workspaceFolder",
           "group": "inline"
         },
         {
           "command": "SonarLint.ABL.RemoveProjectBinding",
           "title": "Remove",
-          "when": "view == SonarLint.ConnectedMode && viewItem == workspaceFolder",
+          "when": "view == SonarLint-abl.ConnectedMode && viewItem == workspaceFolder",
           "group": "inline"
         },
         {
           "command": "SonarLint.ABL.ShareConnectedModeConfiguration",
           "title": "Share",
-          "when": "view == SonarLint.ConnectedMode && viewItem == workspaceFolder",
+          "when": "view == SonarLint-abl.ConnectedMode && viewItem == workspaceFolder",
           "group": "inline"
         },
         {
           "command": "SonarLint.ABL.ShowHotspotRuleDescription",
           "title": "Show Rule Description",
-          "when": "view == SonarLint.SecurityHotspots && viewItem == newHotspotItem"
+          "when": "view == SonarLint-abl.SecurityHotspots && viewItem == newHotspotItem"
         },
         {
           "command": "SonarLint.ABL.ShowHotspotDetails",
           "title": "Show Hotspot Details",
-          "when": "view == SonarLint.SecurityHotspots && (viewItem == knownHotspotItem || viewItem == remoteHotspotItem)"
+          "when": "view == SonarLint-abl.SecurityHotspots && (viewItem == knownHotspotItem || viewItem == remoteHotspotItem)"
         },
         {
           "command": "SonarLint.ABL.ChangeHotspotStatus",
           "title": "Change Status",
-          "when": "view == SonarLint.SecurityHotspots && viewItem == knownHotspotItem"
+          "when": "view == SonarLint-abl.SecurityHotspots && viewItem == knownHotspotItem"
         },
         {
           "command": "SonarLint.ABL.OpenHotspotOnServer",
           "title": "Review on Server",
-          "when": "view == SonarLint.SecurityHotspots && viewItem == knownHotspotItem"
+          "when": "view == SonarLint-abl.SecurityHotspots && viewItem == knownHotspotItem"
         },
         {
           "command": "SonarLint.ABL.ClearHotspotLocations",
           "title": "Clear Highlighting",
-          "when": "view == SonarLint.SecurityHotspots && viewItem == newHotspotItem || viewItem == knownHotspotItem || viewItem == remoteHotspotItem"
+          "when": "view == SonarLint-abl.SecurityHotspots && viewItem == newHotspotItem || viewItem == knownHotspotItem || viewItem == remoteHotspotItem"
         },
         {
           "command": "SonarLint.ABL.HideHotspot",
           "title": "Hide Security Hotspot",
           "category": "ABL SonarLint",
-          "when": "view == SonarLint.SecurityHotspots && viewItem == remoteHotspotItem"
+          "when": "view == SonarLint-abl.SecurityHotspots && viewItem == remoteHotspotItem"
         }
       ]
     },

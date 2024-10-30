@@ -247,7 +247,7 @@ export async function activate(context: VSCode.ExtensionContext) {
   });
 
   allRulesTreeDataProvider = new AllRulesTreeDataProvider(() => languageClient.listAllRules());
-  allRulesView = VSCode.window.createTreeView('SonarLint.AllRules', {
+  allRulesView = VSCode.window.createTreeView('SonarLint-abl.AllRules', {
     treeDataProvider: allRulesTreeDataProvider
   });
   setRulesViewMessage(allRulesView);
@@ -290,7 +290,7 @@ export async function activate(context: VSCode.ExtensionContext) {
 
   allConnectionsTreeDataProvider = new AllConnectionsTreeDataProvider(languageClient);
 
-  const allConnectionsView = VSCode.window.createTreeView('SonarLint.ConnectedMode', {
+  const allConnectionsView = VSCode.window.createTreeView('SonarLint-abl.ConnectedMode', {
     treeDataProvider: allConnectionsTreeDataProvider
   });
   context.subscriptions.push(allConnectionsView);
@@ -595,7 +595,7 @@ function installCustomRequestHandlers(context: VSCode.ExtensionContext) {
     VSCode.commands.executeCommand(Commands.OPEN_BROWSER, VSCode.Uri.parse(browseTo))
   );
   languageClient.onNotification(protocol.OpenConnectionSettingsNotification.type, isSonarCloud => {
-    const targetSection = `sonarlint.connectedMode.connections.${isSonarCloud ? 'sonarcloud' : 'sonarqube'}`;
+    const targetSection = `sonarlint-abl.connectedMode.connections.${isSonarCloud ? 'sonarcloud' : 'sonarqube'}`;
     return VSCode.commands.executeCommand(Commands.OPEN_SETTINGS, targetSection);
   });
   languageClient.onNotification(protocol.ShowHotspotNotification.type, h =>
