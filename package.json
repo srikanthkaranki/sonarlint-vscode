@@ -364,12 +364,12 @@
       {
         "command": "SonarLint.ABL.ScanForHotspotsInFolder",
         "title": "In Whole Folder",
-        "enablement": "view == SonarLint-abl.SecurityHotspots && SonarLint.Hotspots.ShowMode == 'OpenFiles'"
+        "enablement": "view == SonarLint-abl.SecurityHotspots && SonarLint-abl.Hotspots.ShowMode == 'OpenFiles'"
       },
       {
         "command": "SonarLint.ABL.ShowHotspotsInOpenFiles",
         "title": "In Open Files",
-        "enablement": "view == SonarLint-abl.SecurityHotspots && SonarLint.Hotspots.ShowMode == 'Folder'"
+        "enablement": "view == SonarLint-abl.SecurityHotspots && SonarLint-abl.Hotspots.ShowMode == 'Folder'"
       },
       {
         "command": "SonarLint.ABL.FindRuleByKey",
