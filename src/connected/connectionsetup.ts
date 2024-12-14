@@ -24,9 +24,9 @@ import { escapeHtml, ResourceResolver } from '../util/webview';
 
 let connectionSetupPanel: vscode.WebviewPanel;
 
-const sonarQubeNotificationsDocUrl = 'https://docs.sonarqube.org/latest/user-guide/connected-mode/';
+const sonarQubeNotificationsDocUrl = 'https://docs.sonarsource.com/sonarqube-server/latest/user-guide/sonarlint-connected-mode/';
 const sonarCloudNotificationsDocUrl =
-  'https://docs.sonarsource.com/sonarcloud/advanced-setup/sonarlint-smart-notifications/';
+  'https://docs.sonarsource.com/sonarqube-cloud/improving/sonarlint/#smart-notifications';
 const TOKEN_RECEIVED_COMMAND = 'tokenReceived';
 const OPEN_TOKEN_GENERATION_PAGE_COMMAND = 'openTokenGenerationPage';
 const SAVE_CONNECTION_COMMAND = 'saveConnection';
@@ -36,13 +36,16 @@ const SONARQUBE_DESCRIPTION =
   `An <b>open-source, self-managed</b> tool that easily integrates into the developers' CI/CD pipeline<br>
   and DevOps platform to systematically help developers and organizations deliver Clean Code.
   <br><br>
-  SonarQube offers a free <a id="sonarQubeEditionsDownloads" href="#">Community Edition</a>`;
+  SonarQube offers a free <a id="sonarQubeEditionsDownloads" href="#">Community Build</a>`;
 
 const SONARCLOUD_DESCRIPTION =
   `A <b>Software-as-a-Service (SaaS)</b> tool that easily integrates into the cloud DevOps platforms<br>
   and extends the CI/CD workflow to systematically help developers and organizations deliver Clean Code.
   <br><br>
-  <a id="sonarCloudProductPage" href="#">SonarCloud</a> is entirely free for open-source projects.`;
+  <a id="sonarCloudProductPage" href="#">SonarQube Cloud</a> is entirely free for open-source projects.`;
+
+const SONARQUBE_SERVER_LABEL = 'SonarQube Server';
+const SONARQUBE_CLOUD_LABEL = 'SonarQube Cloud';
 
 export function connectToSonarQube(context: vscode.ExtensionContext) {
   return (serverUrl='', projectKey='', isFromSharedConfiguration=false, folderUri?: vscode.Uri) => {
@@ -56,15 +59,10 @@ export function connectToSonarQube(context: vscode.ExtensionContext) {
         folderUri: folderUri?.toString(false)
       }
     };
-    const serverProductName = 'SonarQube';
-    lazyCreateConnectionSetupPanel(context, serverProductName);
-    connectionSetupPanel.webview.html = renderConnectionSetupPanel(context, connectionSetupPanel.webview, {
-      mode: 'create',
-      initialState
-    });
-    finishSetupAndRevealPanel(serverProductName);
+    initializeAndRevealPanel(context, { mode: 'create', initialState }, SONARQUBE_SERVER_LABEL);
   };
 }
+
 
 export function connectToSonarCloud(context: vscode.ExtensionContext) {
   return (organizationKey='', projectKey='', isFromSharedConfiguration=false, folderUri?: vscode.Uri) => {
@@ -78,13 +76,7 @@ export function connectToSonarCloud(context: vscode.ExtensionContext) {
         folderUri: folderUri?.toString(false)
       }
     };
-    const serverProductName = 'SonarCloud';
-    lazyCreateConnectionSetupPanel(context, serverProductName);
-    connectionSetupPanel.webview.html = renderConnectionSetupPanel(context, connectionSetupPanel.webview, {
-      mode: 'create',
-      initialState
-    });
-    finishSetupAndRevealPanel(serverProductName);
+    initializeAndRevealPanel(context, { mode: 'create', initialState }, SONARQUBE_CLOUD_LABEL);
   };
 }
 
@@ -94,13 +86,7 @@ export function editSonarQubeConnection(context: vscode.ExtensionContext) {
     const initialState = {
       conn: await ConnectionSettingsService.instance.loadSonarQubeConnection(connectionId)
     };
-    const serverProductName = 'SonarQube';
-    lazyCreateConnectionSetupPanel(context, serverProductName);
-    connectionSetupPanel.webview.html = renderConnectionSetupPanel(context, connectionSetupPanel.webview, {
-      mode: 'update',
-      initialState
-    });
-    finishSetupAndRevealPanel(serverProductName);
+    initializeAndRevealPanel(context, { mode: 'update', initialState }, SONARQUBE_SERVER_LABEL);
   };
 }
 
@@ -112,19 +98,22 @@ export function editSonarCloudConnection(context: vscode.ExtensionContext) {
       conn: existingConnection,
       userOrganizations: await ConnectionSettingsService.instance.listUserOrganizations(existingConnection.token)
     };
-    const serverProductName = 'SonarCloud';
-    lazyCreateConnectionSetupPanel(context, serverProductName);
-    connectionSetupPanel.webview.html = renderConnectionSetupPanel(context, connectionSetupPanel.webview, {
-      mode: 'update',
-      initialState
-    });
-    finishSetupAndRevealPanel(serverProductName);
+    initializeAndRevealPanel(context, { mode: 'update', initialState }, SONARQUBE_CLOUD_LABEL);
   };
+}
+
+function initializeAndRevealPanel(context: vscode.ExtensionContext, renderOptions: RenderOptions, serverProductName: string) {
+  lazyCreateConnectionSetupPanel(context, serverProductName);
+  connectionSetupPanel.webview.html = renderConnectionSetupPanel(context, connectionSetupPanel.webview, renderOptions);
+  finishSetupAndRevealPanel(serverProductName);
 }
 
 function finishSetupAndRevealPanel(serverProductName: string) {
   connectionSetupPanel.webview.onDidReceiveMessage(handleMessage);
-  connectionSetupPanel.iconPath = util.resolveExtensionFile('images', `${serverProductName.toLowerCase()}.svg`);
+  connectionSetupPanel.iconPath = {
+    light: util.resolveExtensionFile('images', `${serverProductName.toLowerCase()}.svg`),
+    dark: util.resolveExtensionFile('images', `${serverProductName.toLowerCase()}_dark.svg`)
+  }
   connectionSetupPanel.reveal();
 }
 
@@ -186,7 +175,7 @@ function renderConnectionSetupPanel(context: vscode.ExtensionContext, webview: v
   const connection = initialState.conn
   const isSonarQube = isSonarQubeConnection(connection);
 
-  const serverProductName = isSonarQube ? 'SonarQube' : 'SonarCloud';
+  const serverProductName = isSonarQube ? SONARQUBE_SERVER_LABEL : SONARQUBE_CLOUD_LABEL;
   const serverDocUrl = isSonarQube ? sonarQubeNotificationsDocUrl : sonarCloudNotificationsDocUrl;
 
   const initialConnectionId = escapeHtml(connection.connectionId) || '';
@@ -254,7 +243,7 @@ function renderConnectionSetupPanel(context: vscode.ExtensionContext, webview: v
         <br>
         ${maybeFolderBindingParagraph}
         <br>
-        <a href='https://docs.sonarsource.com/sonarlint/vs-code/team-features/connected-mode-setup/#connection-setup'>Need help setting up a connection?</a>
+        <a href='https://docs.sonarsource.com/sonarqube-for-ide/vs-code/team-features/connected-mode-setup/#connection-setup'>Need help setting up a connection?</a>
         <div id="connectionCheck" class="formRowWithStatus">
           <vscode-button id="saveConnection" disabled>${saveButtonLabel}</vscode-button>
           <span id="connectionProgress" class="hidden">
@@ -272,8 +261,8 @@ function renderServerUrlField(initialState) {
     const serverUrl = escapeHtml(initialState.conn.serverUrl);
     return `<vscode-text-field id="serverUrl" type="url" placeholder="https://your.sonarqube.server/" required size="40"
     autofocus value="${serverUrl}">
-      <b>Server URL</b> <vscode-badge class='tooltip'>i<span class='tooltiptext'>The base URL for your SonarQube server</span></vscode-badge>
-    </vscode-text-field><span class='warning'>${serverUrl ? 'Please ensure that your Server URL matches your SonarQube instance.' : ''}</span>
+      <b>Server URL</b> <vscode-badge class='tooltip'>i<span class='tooltiptext'>The base URL for your SonarQube Server instance</span></vscode-badge>
+    </vscode-text-field><span class='warning'>${serverUrl ? 'Please ensure that your Server URL matches your SonarQube Server instance.' : ''}</span>
     <input type="hidden" id="serverUrl-initial" value="${serverUrl}" />`;
   }
   return '';

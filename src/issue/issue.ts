@@ -9,10 +9,9 @@
 
 import { SonarLintExtendedLanguageClient } from '../lsp/client';
 import * as VSCode from 'vscode';
-import { code2ProtocolConverter, getFileNameFromFullPath, getRelativePathWithFileNameFromFullPath, protocol2CodeConverter } from '../util/uri';
-import { showNoActiveFileOpenWarning } from '../util/showMessage';
+import { code2ProtocolConverter, getFileNameFromFullPath, getRelativePathWithFileNameFromFullPath, protocol2CodeConverter, pathExists } from '../util/uri';
+import { showNoActiveFileOpenWarning, showNoFileWithUriError } from '../util/showMessage';
 import { AnalysisFile, CheckIssueStatusChangePermittedResponse } from '../lsp/protocol';
-import { Commands } from '../util/commands';
 import { isValidRange, LocationTreeItem, SecondaryLocationsTree } from '../location/locations';
 import * as protocol from '../lsp/protocol';
 import { DateTime } from 'luxon';
@@ -103,19 +102,9 @@ export class IssueService {
 
   static async showIssue(issue: protocol.Issue) {
     const documentUri = protocol2CodeConverter(issue.fileUri);
-    if (documentUri == null) {
-      VSCode.window
-        .showErrorMessage(
-          `Could not find file '${issue.fileUri}' in the current workspace.
-Please make sure that the right folder is open and bound to the right project on the server,
- and that the file has not been removed or renamed.`,
-          'Show Documentation'
-        )
-        .then(action => {
-          if (action === 'Show Documentation') {
-            VSCode.commands.executeCommand(Commands.OPEN_BROWSER, VSCode.Uri.parse('https://docs.sonarsource.com/sonarlint/vs-code/troubleshooting/#no-matching-issue-found'));
-          }
-        });
+    const exists = await pathExists(documentUri);
+    if (documentUri == null || !exists) {
+      showNoFileWithUriError(documentUri);
     } else {
       const editor = await VSCode.window.showTextDocument(documentUri);
 
@@ -123,7 +112,7 @@ Please make sure that the right folder is open and bound to the right project on
 
       if (!isValidRange(diagnostic.range, editor.document) || !issue.codeMatches) {
         VSCode.window.showWarningMessage(
-          `SonarLint failed to open the issue in '${getFileNameFromFullPath(issue.fileUri)}'.
+          `SonarQube for VS Code failed to open the issue in '${getFileNameFromFullPath(issue.fileUri)}'.
            Local code does not match remote. Please make sure that the right branch is checked out.`
         );
         return;
@@ -141,10 +130,9 @@ Please make sure that the right folder is open and bound to the right project on
 
       if (issue.shouldOpenRuleDescription) {
         await VSCode.commands.executeCommand(
-          'SonarLint.ABL.OpenRuleDescCodeAction',
+          'SonarLint.ABL.OpenRuleDesc',
           issue.ruleKey,
-          code2ProtocolConverter(documentUri),
-          ''
+          issue.fileUri,
         );
       }
     }
@@ -158,7 +146,7 @@ Please make sure that the right folder is open and bound to the right project on
         : null;
       IssueService._instance.issueLocationsView.message = createdAgo
         ? `Analyzed ${createdAgo} on '${issue.connectionId}'`
-        : `Detected by SonarLint`;
+        : `Detected by SonarQube for VS Code`;
     } else {
       IssueService._instance.issueLocationsView.message = null;
     }

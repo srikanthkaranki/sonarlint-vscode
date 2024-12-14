@@ -132,15 +132,11 @@ export class BindingService {
     );
     const workspaceFolder = workspaceFolders.find(f => f.name === selectedWorkspaceFolderName);
 
-    const existingSettings = VSCode.workspace
+    await VSCode.workspace
       .getConfiguration(SONARLINT_CATEGORY, workspaceFolder)
-      .get<ProjectBinding>(BINDING_SETTINGS);
-    if (existingSettings.projectKey === undefined) {
-      await VSCode.workspace
-        .getConfiguration(SONARLINT_CATEGORY, workspaceFolder)
-        .update(BINDING_SETTINGS, { connectionId: params.connectionId, projectKey: params.projectKey });
-      await this.languageClient.didCreateBinding(params.isFromSharedConfiguration ? BindingCreationMode.IMPORTED : BindingCreationMode.AUTOMATIC);
-    }
+      .update(BINDING_SETTINGS, { connectionId: params.connectionId, projectKey: params.projectKey });
+    await this.languageClient.didCreateBinding(params.isFromSharedConfiguration ? BindingCreationMode.IMPORTED : BindingCreationMode.AUTOMATIC);
+
     return { configurationScopeId: workspaceFolder.uri.toString() };
   }
 
@@ -292,14 +288,14 @@ export class BindingService {
     const LEARN_MORE_ACTION = 'Learn more';
     const NOT_NOW_ACTION = 'Not now';
 
-    VSCode.window.showInformationMessage(`Do you want to share this new SonarLint Connected Mode configuration?
+    VSCode.window.showInformationMessage(`Do you want to share this new SonarQube Connected Mode configuration?
     A configuration file will be created in this working directory. This will allow your team to reuse the binding configuration`,
       SHARE_CONFIGURATION_ACTION, LEARN_MORE_ACTION, NOT_NOW_ACTION)
       .then(selection => {
         if (selection === SHARE_CONFIGURATION_ACTION) {
           this.sharedConnectedModeSettingsService.createSharedConnectedModeSettingsFile(workspaceFolder);
         } else if (selection === LEARN_MORE_ACTION) {
-          VSCode.commands.executeCommand(OPEN_BROWSER, VSCode.Uri.parse('https://docs.sonarsource.com/sonarlint/vs-code/team-features/connected-mode-setup/#reuse-the-binding-configuration'));
+          VSCode.commands.executeCommand(OPEN_BROWSER, VSCode.Uri.parse('https://docs.sonarsource.com/sonarqube-for-ide/vs-code/team-features/connected-mode-setup/#reuse-the-binding-configuration'));
         }
       });
   }

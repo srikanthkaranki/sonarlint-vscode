@@ -198,7 +198,9 @@ export async function activate(context: VSCode.ExtensionContext) {
             isTelemetryEnabled: VSCode.env.isTelemetryEnabled,
             ...(VSCode.env.isTelemetryEnabled && { machineId: VSCode.env.machineId })
           },
-          omnisharpDirectory: Path.resolve(context.extensionPath, 'omnisharp')
+          omnisharpDirectory: Path.resolve(context.extensionPath, 'omnisharp'),
+          csharpOssPath: Path.resolve(context.extensionPath, 'analyzers', 'sonarcsharp.jar'),
+          csharpEnterprisePath: Path.resolve(context.extensionPath, 'analyzers', 'csharpenterprise.jar'),
         },
         enableNotebooks: true,
         clientNodePath: VSCode.workspace.getConfiguration().get('sonarlint-abl.pathToNodeExecutable'),
@@ -224,7 +226,7 @@ export async function activate(context: VSCode.ExtensionContext) {
   FileSystemServiceImpl.init();
   SharedConnectedModeSettingsService.init(languageClient, FileSystemServiceImpl.instance, context);
   BindingService.init(languageClient, context.workspaceState, ConnectionSettingsService.instance, SharedConnectedModeSettingsService.instance);
-  AutoBindingService.init(BindingService.instance, context.workspaceState, ConnectionSettingsService.instance, FileSystemServiceImpl.instance);
+  AutoBindingService.init(BindingService.instance, context.workspaceState, ConnectionSettingsService.instance, FileSystemServiceImpl.instance, languageClient);
   migrateConnectedModeSettings(getCurrentConfiguration(), ConnectionSettingsService.instance).catch(e => {
     /* ignored */
   });
@@ -356,13 +358,13 @@ function registerCommands(context: VSCode.ExtensionContext) {
 
   context.subscriptions.push(
     VSCode.commands.registerCommand(Commands.SHOW_HOTSPOT_RULE_DESCRIPTION, hotspot =>
-      languageClient.showHotspotRuleDescription(hotspot.ruleKey, hotspot.key, hotspot.fileUri)
+      languageClient.showHotspotRuleDescription(hotspot.key, hotspot.fileUri)
     )
   );
 
   context.subscriptions.push(
     VSCode.commands.registerCommand(Commands.SHOW_HOTSPOT_DETAILS, async hotspot => {
-      const hotspotDetails = await languageClient.getHotspotDetails(hotspot.ruleKey, hotspot.key, hotspot.fileUri);
+      const hotspotDetails = await languageClient.getHotspotDetails(hotspot.key, hotspot.fileUri);
       showHotspotDetails(hotspotDetails, hotspot);
     })
   );
@@ -436,6 +438,12 @@ function registerCommands(context: VSCode.ExtensionContext) {
   // context.subscriptions.push(
   //   VSCode.commands.registerCommand(Commands.CONFIGURE_COMPILATION_DATABASE, configureCompilationDatabase)
   // );
+
+  context.subscriptions.push(
+    VSCode.commands.registerCommand(Commands.AUTO_BIND_WORKSPACE_FOLDERS, () =>
+      AutoBindingService.instance.autoBindWorkspace()
+    )
+  );
 
   context.subscriptions.push(
     VSCode.commands.registerCommand(Commands.CONNECT_TO_SONARQUBE, () => connectToSonarQube(context)())
@@ -622,7 +630,10 @@ function installCustomRequestHandlers(context: VSCode.ExtensionContext) {
   languageClient.onNotification(protocol.SubmitNewCodeDefinition.type, newCodeDefinitionForFolderUri => {
     NewCodeDefinitionService.instance.updateNewCodeDefinitionForFolderUri(newCodeDefinitionForFolderUri);
   });
-  languageClient.onNotification(protocol.SuggestConnection.type, (params) => SharedConnectedModeSettingsService.instance.handleSuggestConnectionNotification(params.suggestionsByConfigScopeId))
+  languageClient.onNotification(protocol.SuggestConnection.type, (params) => SharedConnectedModeSettingsService.instance.handleSuggestConnectionNotification(params.suggestionsByConfigScopeId));
+  languageClient.onRequest(protocol.IsOpenInEditor.type, fileUri => {
+    return VSCode.workspace.textDocuments.some(doc => code2ProtocolConverter(doc.uri) === fileUri);
+  });
 }
 
 function updateSonarLintViewContainerBadge() {
@@ -648,7 +659,7 @@ async function showAllLocations(issue: protocol.Issue) {
       : null;
     issueLocationsView.message = createdAgo
       ? `Analyzed ${createdAgo} on '${issue.connectionId}'`
-      : `Detected by SonarLint`;
+      : `Detected by SonarQube for VS Code`;
   } else {
     issueLocationsView.message = null;
   }

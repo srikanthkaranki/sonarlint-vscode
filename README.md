@@ -1,6 +1,6 @@
-# SonarLint for Progress OpenEdge - CABL Version
+# SonarQube for IDE: Visual Studio Code (formerly SonarLint) - CABL Version
 
-This extension is a fork of the official SonarLint extension by [Sonar](https://www.sonarsource.com/), specifically for OpenEdge ABL code analysis and not for any other language. It can coexist with the official SonarLint extension, though settings must be duplicated due to different prefix.
+This extension is a fork of the official SonarQube for IDE extension by [Sonar](https://www.sonarsource.com/), specifically for OpenEdge ABL code analysis and not for any other language. It can coexist with the official SonarLint extension, though settings must be duplicated due to different prefix.
 
 This extension depends on [the Riverside Software extension for ABL](https://marketplace.visualstudio.com/items?itemName=RiversideSoftware.openedge-abl-lsp).
 

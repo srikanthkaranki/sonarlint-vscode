@@ -64,12 +64,12 @@ suite('Java Test Suite', () => {
 
     // Check that the exception-related diagnostic has 3 code actions
     const rangeInMiddleOfThrowsMyException = new vscode.Range(8, 54, 8, 54);
-    const codeActionsResult = (await vscode.commands.executeCommand<(vscode.Command | vscode.CodeAction)[]>('vscode.executeCodeActionProvider', document.uri, rangeInMiddleOfThrowsMyException, vscode.CodeActionKind.QuickFix.value))!;
+    const codeActionsResult = (await vscode.commands.executeCommand<(vscode.Command | vscode.CodeAction)[]>('vscode.executeCodeActionProvider', document.uri, rangeInMiddleOfThrowsMyException, vscode.CodeActionKind.QuickFix.value));
     // With old versions of VSCode, code actions are not necessarily filtered on kind
     const expectedActionTitles = [
-      "SonarLint: Deactivate rule 'java:S1130'",
-      "SonarLint: Open description of rule 'java:S1130'",
-      'SonarLint: Remove "MyException"'
+      "SonarQube: Deactivate rule 'java:S1130'",
+      "SonarQube: Remove \"MyException\"",
+      "SonarQube: Show issue details for 'java:S1130'"
     ];
     const actualCodeActionTitles = codeActionsResult.filter(c => expectedActionTitles.indexOf(c.title) >= 0).map(c => c.title);
     // Order of code actions is not stable, forcing lexicographic order for assertion
@@ -77,7 +77,7 @@ suite('Java Test Suite', () => {
     assert.deepStrictEqual(actualCodeActionTitles, expectedActionTitles);
 
     // Check that first fix has an edit that can be applied
-    const quickFix = codeActionsResult.filter(c => c.title === 'SonarLint: Remove "MyException"')[0] as vscode.CodeAction;
+    const quickFix = codeActionsResult.filter(c => c.title === 'SonarQube: Remove "MyException"')[0] as vscode.CodeAction;
     const fixApplied = await vscode.workspace.applyEdit(quickFix.edit!);
     assert.strictEqual(fixApplied, true);
 

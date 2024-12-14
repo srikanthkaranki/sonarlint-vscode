@@ -14,6 +14,8 @@ import * as util from '../util/util';
 import { clean, escapeHtml, ResourceResolver } from '../util/webview';
 import { decorateContextualHtmlContentWithDiff } from './code-diff';
 import { highlightAllCodeSnippetsInDesc } from './syntax-highlight';
+import * as fs from 'fs';
+import { DOMParser, XMLSerializer } from 'xmldom';
 
 let ruleDescriptionPanel: VSCode.WebviewPanel;
 
@@ -24,7 +26,10 @@ export function showRuleDescription(context: VSCode.ExtensionContext) {
     }
     lazyCreateRuleDescriptionPanel(context);
     ruleDescriptionPanel.webview.html = computeRuleDescPanelContent(context, ruleDescriptionPanel.webview, params);
-    ruleDescriptionPanel.iconPath = util.resolveExtensionFile('images', 'sonarlint.svg');
+    ruleDescriptionPanel.iconPath = {
+      light: util.resolveExtensionFile('images', 'sonarqube_for_ide.svg'),
+      dark: util.resolveExtensionFile('images', 'sonarqube_for_ide_dark.svg')
+    };
     ruleDescriptionPanel.reveal();
   };
 }
@@ -33,7 +38,7 @@ function lazyCreateRuleDescriptionPanel(context: VSCode.ExtensionContext) {
   if (!ruleDescriptionPanel) {
     ruleDescriptionPanel = VSCode.window.createWebviewPanel(
       'sonarlint.RuleDesc',
-      'SonarLint Rule Description',
+      'SonarQube Rule Description',
       VSCode.ViewColumn.Two,
       {
         enableScripts: true
@@ -89,8 +94,8 @@ function computeRuleDescPanelContent(
 }
 
 function renderCleanCodeAttribute(rule: ShowRuleDescriptionParams) {
-  const categoryLabel = escapeHtml(rule.cleanCodeAttributeCategory);
-  const attributeLabel = escapeHtml(rule.cleanCodeAttribute);
+  const categoryLabel = escapeHtml(rule.severityDetails.cleanCodeAttributeCategory);
+  const attributeLabel = escapeHtml(rule.severityDetails.cleanCodeAttribute);
   return `<div class="clean-code-attribute capsule" title="Clean Code attributes are characteristics code needs to have to be considered clean.">
   <span class="attribute-category">${categoryLabel} issue</span>
   <span class="attribute">${attributeLabel}</span>
@@ -108,32 +113,44 @@ function renderImpact(softwareQuality: string, severity: string, resolver: Resou
 </div>`;
 }
 
+function renderStandardModeSeverityDetails(ruleType: string, severity: string, resolver: ResourceResolver) {
+  const ruleTypeToLowerCase = ruleType.toLocaleLowerCase('en-us');
+  const severityToLowerCase = severity.toLocaleLowerCase('en-us');
+  const ruleTypeImgSrc = util.resolveExtensionFile('images', 'type', `${ruleTypeToLowerCase}.svg`);
+  const severityImgSrc = util.resolveExtensionFile('images', 'severity', `${severityToLowerCase}.svg`);
+  return `<div class="impact severity-${severityToLowerCase} capsule">
+  ${fetchSVGIcon(ruleTypeImgSrc)}
+  &nbsp;${clean(ruleType)}&nbsp;
+  ${fetchSVGIcon(severityImgSrc)}
+  </div>`;
+}
+
+function fetchSVGIcon(pathToSVG: VSCode.Uri) : string {
+  const svgText = fs.readFileSync(pathToSVG.path, 'utf8');
+  const parser : DOMParser = new DOMParser();
+  const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
+  const svgElement = svgDoc.documentElement;
+
+  return new XMLSerializer().serializeToString(svgElement);
+}
+
 function renderTaxonomyInfo(rule: ShowRuleDescriptionParams, resolver: ResourceResolver) {
-  if (rule.impacts && Object.keys(rule.impacts).length > 0) {
+  if (rule.severityDetails.impacts && Object.keys(rule.severityDetails.impacts).length > 0) {
     // Clean Code taxonomy
-    const renderedImpacts = Object.entries(rule.impacts).map(([softwareQuality, severity]) => renderImpact(softwareQuality, severity, resolver));
+    const renderedImpacts = Object.entries(rule.severityDetails.impacts).map(([softwareQuality, severity]) => renderImpact(softwareQuality, severity, resolver));
     return `<div class="taxonomy">
   ${renderCleanCodeAttribute(rule)}
   &nbsp;
   ${renderedImpacts.join('&nbsp;')}
   &nbsp;
   <a href="${SonarLintDocumentation.CLEAN_CODE_CONCEPTS}" class="capsule"
-    title="Check out the Clean Code concepts in the SonarLint documentation"
+    title="Check out the Clean Code concepts in the SonarQube for VS Code documentation"
     rel="external glossary" target="_blank" referrerpolicy="no-referrer">What is clean code?</a>
 </div>`;
   } else {
     // Old type + severity taxonomy
-    const severityImgSrc = resolver.resolve('images', 'severity', `${rule.severity.toLowerCase()}.png`);
-    const typeImgSrc = resolver.resolve('images', 'type', `${rule.type.toLowerCase()}.png`);
     return `<div class="taxonomy">
-  <div class="impact capsule">
-    ${clean(rule.type)}
-    <img alt="${rule.type}" src="${typeImgSrc}" />
-  </div>
-  <div class="impact capsule">
-    ${clean(rule.severity)}
-    <img alt="${rule.severity}" src="${severityImgSrc}" />
-  </div>
+      ${renderStandardModeSeverityDetails(rule.severityDetails.type, rule.severityDetails.severity, resolver)}
 </div>`;
   }
 }
@@ -144,16 +161,16 @@ export function renderTaintBanner(rule: ShowRuleDescriptionParams, infoImgSrc: s
   }
   return `<div class="info-banner-wrapper">
             <p class="info-banner"><span><img src=${infoImgSrc} alt="info"></span> 
-            This injection vulnerability was detected by the latest SonarQube or SonarCloud analysis.
-             SonarLint fetches and reports it in your local code to help you investigate it and fix it,
+            This injection vulnerability was detected by the latest SonarQube (Server, Cloud) analysis.
+             SonarQube for VS Code fetches and reports it in your local code to help you investigate it and fix it,
               but cannot tell you whether you successfully fixed it. To verify your fix, please ensure
-              the code containing your fix is analyzed by SonarQube or SonarCloud.
+              the code containing your fix is analyzed by SonarQube (Server, Cloud).
             </p>
            </div>`;
 }
 
 export function renderHotspotBanner(rule: ShowRuleDescriptionParams, infoImgSrc: string) {
-  if (rule.type !== 'SECURITY_HOTSPOT') {
+  if (rule.severityDetails.type !== 'SECURITY_HOTSPOT') {
     return '';
   }
   return `<div class="info-banner-wrapper">

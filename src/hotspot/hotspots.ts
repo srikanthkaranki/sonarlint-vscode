@@ -96,7 +96,7 @@ Please make sure that the right folder is open and bound to the right project on
       if (action === 'Show Documentation') {
         vscode.commands.executeCommand(
           Commands.OPEN_BROWSER,
-          vscode.Uri.parse('https://docs.sonarqube.org/latest/user-guide/security-hotspots/')
+          vscode.Uri.parse('https://docs.sonarsource.com/sonarqube-server/latest/user-guide/security-hotspots/')
         );
       }
     });
@@ -172,7 +172,7 @@ export const showHotspotDescription = () => {
   if (!hotspotDescriptionPanel) {
     hotspotDescriptionPanel = vscode.window.createWebviewPanel(
       'sonarlint.DiagContext',
-      'SonarQube Security Hotspot',
+      'SonarQube Server Security Hotspot',
       vscode.ViewColumn.Two,
       {
         enableScripts: false
@@ -193,8 +193,8 @@ export const showHotspotDescription = () => {
     hotspotDescriptionPanel.webview
   );
   hotspotDescriptionPanel.iconPath = {
-    light: resolveExtensionFile('images/sonarqube.svg'),
-    dark: resolveExtensionFile('images/sonarqube.svg')
+    light: resolveExtensionFile('images/sonarqube server.svg'),
+    dark: resolveExtensionFile('images/sonarqube server_dark.svg')
   };
   hotspotDescriptionPanel.reveal();
 };
@@ -364,8 +364,8 @@ export function showHotspotDetails(hotspotDetails: ShowRuleDescriptionParams, ho
   );
 
   hotspotDetailsPanel.iconPath = {
-    light: resolveExtensionFile('images/sonarlint.svg'),
-    dark: resolveExtensionFile('images/sonarlint.svg')
+    light: resolveExtensionFile('images/sonarqube_for_ide.svg'),
+    dark: resolveExtensionFile('images/sonarqube_for_ide_dark.svg')
   };
 
   hotspotDetailsPanel.reveal();

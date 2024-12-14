@@ -6,7 +6,7 @@
  * ------------------------------------------------------------------------------------------ */
 'use strict';
 
-import { BindingService } from '../../src/connected/binding';
+import { BindingService, ProjectBinding } from '../../src/connected/binding';
 import {
   ConnectionSettingsService,
   SonarCloudConnection,
@@ -19,9 +19,11 @@ import * as VSCode from 'vscode';
 import { expect } from 'chai';
 import { AutoBindingService, DO_NOT_ASK_ABOUT_AUTO_BINDING_FOR_WS_FLAG } from '../../src/connected/autobinding';
 import { TextEncoder } from 'util';
-import { FolderUriParams, ListFilesInScopeResponse } from '../../src/lsp/protocol';
+import { FolderUriParams, ListFilesInScopeResponse, SuggestBindingParams } from '../../src/lsp/protocol';
 import { FileSystemServiceImpl } from '../../src/fileSystem/fileSystemServiceImpl';
 import { sleep } from '../testutil';
+import { SonarLintExtendedLanguageClient } from '../../src/lsp/client';
+import * as sinon from 'sinon';
 
 const CONNECTED_MODE_SETTINGS_SONARQUBE = 'connectedMode.connections.sonarqube';
 const CONNECTED_MODE_SETTINGS_SONARCLOUD = 'connectedMode.connections.sonarcloud';
@@ -33,7 +35,41 @@ const TEST_SONARQUBE_CONNECTION = {
   serverUrl: 'https://test.sonarqube.com'
 };
 
+const mockClient = {
+  async getRemoteProjectsForConnection(_connectionId: string): Promise<Object> {
+    return { projectKey1: 'projectName1', projectKey2: 'projectName2' };
+  },
+  async checkConnection(connectionId: string) {
+    return Promise.resolve({ connectionId, success: true });
+  },
+  async getSuggestedBinding(configScopeId:string, connectionId: string):Promise<SuggestBindingParams> {
+    return Promise.resolve({suggestions: {
+      [configScopeId]: [{
+        connectionId: connectionId,
+        sonarProjectKey: 'myProjectKey',
+        sonarProjectName: 'myProjectName',
+        isFromSharedConfiguration: false
+      }]
+    }});
+  },
+  async didCreateBinding(mode) {
+    return Promise.resolve();
+  }
+} as SonarLintExtendedLanguageClient;
+
 const mockSettingsService = {
+  async loadSonarQubeConnection(connectionId: string): Promise<SonarQubeConnection> {
+    return { serverUrl: 'https://next.sonarqube.com/sonarqube', connectionId };
+  },
+  getSonarQubeConnections(): SonarQubeConnection[] {
+    return [];
+  },
+  getSonarCloudConnections(): SonarCloudConnection[] {
+    return [];
+  }
+} as ConnectionSettingsService;
+
+const mockSettingsServiceWitConnections = {
   async loadSonarQubeConnection(connectionId: string): Promise<SonarQubeConnection> {
     return { serverUrl: 'https://next.sonarqube.com/sonarqube', connectionId };
   },
@@ -58,7 +94,11 @@ const mockSettingsService = {
 } as ConnectionSettingsService;
 
 const mockBindingService = {
-  // nothing to mock for current tests
+  isBound(workspaceFolder: VSCode.WorkspaceFolder): boolean {
+    const config = VSCode.workspace.getConfiguration(SONARLINT_CATEGORY, workspaceFolder.uri);
+    const binding = config.get<ProjectBinding>(BINDING_SETTINGS);
+    return !!binding.projectKey;
+  }
 } as BindingService;
 
 const mockWorkspaceState = {
@@ -103,19 +143,30 @@ suite('Auto Binding Test Suite', () => {
       await VSCode.workspace.fs.delete(fileUri);
     }
     tempFiles = [];
+    sinon.restore();
   });
 
   suite('Bindings Manager', () => {
-    let underTest;
+    let underTest : AutoBindingService;
+    let underTestWithConnections : AutoBindingService;
     setup(() => {
       FileSystemServiceImpl.init();
       AutoBindingService.init(
         mockBindingService,
         mockWorkspaceState,
         mockSettingsService,
-        FileSystemServiceImpl.instance
+        FileSystemServiceImpl.instance,
+        mockClient
       );
       underTest = AutoBindingService.instance;
+      AutoBindingService.init(
+        mockBindingService,
+        mockWorkspaceState,
+        mockSettingsServiceWitConnections,
+        FileSystemServiceImpl.instance,
+        mockClient
+      );
+      underTestWithConnections = AutoBindingService.instance;
     });
 
     test(`No autobinding when user said "don't ask again" for folder`, async () => {
@@ -129,7 +180,12 @@ suite('Auto Binding Test Suite', () => {
       await mockWorkspaceState.updateBindingForFolder([workspaceFolder.uri.toString()]);
 
       await underTest.checkConditionsAndAttemptAutobinding({
-        suggestions: { folderUri: [workspaceFolder.uri.toString()] }
+        suggestions: { [workspaceFolder.uri.toString()]: [{
+          connectionId: 'test',
+          sonarProjectKey: 'myProjectKey',
+          sonarProjectName: 'myProjectName',
+          isFromSharedConfiguration: false
+        }] }
       });
 
       const bindingAfter = VSCode.workspace
@@ -185,6 +241,9 @@ suite('Auto Binding Test Suite', () => {
 
       // crawl the directory
       await FileSystemServiceImpl.instance.crawlDirectory(VSCode.Uri.parse(params.folderUri));
+
+      // make sure results get in place
+      await sleep(500);
 
       const foundFiles: ListFilesInScopeResponse = await underTest.listAutobindingFilesInFolder(params);
 
@@ -297,8 +356,102 @@ suite('Auto Binding Test Suite', () => {
         .get(BINDING_SETTINGS);
       expect(bindingAfter).to.be.empty;
     });
+
+    test('Should not autobind workspace when no connection exists', async () => {
+      // Make sure no connection exists
+      await VSCode.workspace
+      .getConfiguration(SONARLINT_CATEGORY)
+      .update(CONNECTED_MODE_SETTINGS_SONARQUBE, undefined, VSCode.ConfigurationTarget.Global);
+
+      await VSCode.workspace
+      .getConfiguration(SONARLINT_CATEGORY)
+      .update(CONNECTED_MODE_SETTINGS_SONARCLOUD, undefined, VSCode.ConfigurationTarget.Global);
+
+      // Create a spy for the showWarningMessage method
+      const showWarningMessageSpy = sinon.spy(VSCode.window, 'showWarningMessage');
+  
+      // Call the function that triggers the notification
+      await underTest.autoBindWorkspace();
+  
+      // Assert that the notification was shown
+      expect(showWarningMessageSpy.calledOnce).to.be.true;
+      expect(showWarningMessageSpy.calledWith(`"Bind all workspace folders to SonarQube (Server, Cloud)"
+      can only be invoked if a SonarQube (Server, Cloud) connection exists`)).to.be.true;
+  
+      // Restore the original method
+      showWarningMessageSpy.restore();
+    });
+
+    test('Should show warning message when all folders are already bound', async () => {
+      // Bind all folders in the workspace
+      await Promise.all(VSCode.workspace.workspaceFolders.map(async (folder) => {
+        await VSCode.workspace
+          .getConfiguration(SONARLINT_CATEGORY, folder.uri)
+          .update(BINDING_SETTINGS, {'projectKey': 'myProjectKey'}, VSCode.ConfigurationTarget.WorkspaceFolder);
+      }));
+
+      // Create a spy for the showInformationMessage method
+      const showInformationMessage = sinon.spy(VSCode.window, 'showInformationMessage');
+  
+      // Call the function that triggers the notification
+      await underTestWithConnections.autoBindWorkspace();
+  
+      // Assert that the notification was shown
+      expect(showInformationMessage.calledOnce).to.be.true;
+      expect(showInformationMessage.calledWith(`All folders in this workspace are already bound
+         to SonarQube (Server, Cloud) projects`)).to.be.true;
+  
+      // Restore the original method
+      showInformationMessage.restore();
+
+      // UN-Bind all folders in the workspace & restore all other settings
+      await Promise.all(VSCode.workspace.workspaceFolders.map(async (folder) => {
+        await VSCode.workspace
+          .getConfiguration(SONARLINT_CATEGORY, folder.uri)
+          .update(BINDING_SETTINGS, undefined, VSCode.ConfigurationTarget.WorkspaceFolder);
+      }));
+      deleteSettingsFiles();
+    });
+
+    test('Should show binding suggestion notification', async () => {
+      const showQuickPickStub = sinon.stub(VSCode.window, 'showQuickPick');
+      showQuickPickStub.onFirstCall().resolves(VSCode.workspace.workspaceFolders[0].name);
+      showQuickPickStub.onSecondCall().resolves('SQconnectionId');
+
+      // Create a spy for the showInformationMessage method
+      const showInformationMessage = sinon.spy(VSCode.window, 'showInformationMessage');
+  
+      // Call the function that triggers the notification
+      underTestWithConnections.autoBindWorkspace();
+      await sleep(1000);
+
+      // Assert that the notification was shown
+      expect(showInformationMessage.called).to.be.true;
+      expect(showInformationMessage.getCall(0).args[0]).to.equal("Do you want to bind folder 'sample-for-bindings' to project 'myProjectKey' of SonarQube Server 'undefined'?\n" +
+        '      [Learn More](https://docs.sonarsource.com/sonarqube-for-ide/vs-code/team-features/connected-mode/)');
+      expect(showInformationMessage.getCall(0).args[1]).to.equal('Configure Binding');
+      expect(showInformationMessage.getCall(0).args[2]).to.equal('Choose Manually');
+      expect(showInformationMessage.getCall(0).args[3]).to.equal("Don't Ask Again");
+
+      // Restore the original method
+      showInformationMessage.restore();
+    });
   });
 });
+
+async function deleteSettingsFiles() {
+  const workspaceFolders = VSCode.workspace.workspaceFolders;
+  if (workspaceFolders) {
+    for (const folder of workspaceFolders) {
+      const settingsUri = VSCode.Uri.joinPath(folder.uri, '.vscode', 'settings.json');
+      try {
+        await VSCode.workspace.fs.delete(settingsUri, { recursive: true, useTrash: false });
+      } catch (error) {
+        console.error(`Failed to delete settings file: ${settingsUri.fsPath}`, error);
+      }
+    }
+  }
+}
 
 async function cleanBindings() {
   return VSCode.workspace

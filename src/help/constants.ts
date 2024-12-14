@@ -18,7 +18,7 @@ export const helpAndFeedbackItems: HelpAndFeedbackItem[] = [
     viewItem: true,
     command: {
       command: 'workbench.action.openWalkthrough',
-      title: 'Welcome to SonarLint!',
+      title: 'Welcome to SonarQube for VS Code!',
       arguments: ['RiversideSoftware.sonarlint-abl#SonarLint.walkthrough', false]
     }
   },
@@ -66,7 +66,7 @@ export const helpAndFeedbackItems: HelpAndFeedbackItem[] = [
   },
   {
     id: 'sonarQubeProductPage',
-    label: 'SonarQube',
+    label: 'SonarQube Server',
     url: 'https://www.sonarsource.com/products/sonarqube/',
     icon: 'n/a',
     viewItem: false
@@ -74,20 +74,20 @@ export const helpAndFeedbackItems: HelpAndFeedbackItem[] = [
   {
     id: 'connectedModeDocs',
     label: 'Connected Mode',
-    url: 'https://docs.sonarsource.com/sonarlint/vs-code/team-features/connected-mode/',
+    url: 'https://docs.sonarsource.com/sonarqube-for-ide/vs-code/team-features/connected-mode/',
     icon: 'n/a',
     viewItem: false
   },
   {
     id: 'compareServerProducts',
-    label: 'Compare SonarQube and SonarCloud',
+    label: 'Compare SonarQube Server and SonarQube Cloud',
     url: 'https://www.sonarsource.com/blog/sq-sc_guidance/',
     icon: 'n/a',
     viewItem: false
   },
   {
     id: 'sonarQubeEditionsDownloads',
-    label: 'SonarQube Downloads',
+    label: 'SonarQube Server Downloads',
     url: 'https://www.sonarsource.com/products/sonarqube/downloads/',
     icon: 'n/a',
     viewItem: false

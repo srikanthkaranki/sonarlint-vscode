@@ -11,6 +11,7 @@
 import * as vscode from 'vscode';
 import { window } from 'vscode';
 import { SslCertificateConfirmationParams } from '../lsp/protocol';
+import { Commands } from '../util/commands';
 
 const OPEN_FOLDER_ACTION = 'Open Folder';
 export const DONT_ASK_AGAIN_ACTION = "Don't Ask Again";
@@ -37,7 +38,7 @@ export async function tooManyFilesConfirmation(filesCount: number): Promise<Hots
   return vscode.window.showWarningMessage(
     `There are ${filesCount} files to analyze for hotspots in project. 
         Analysis may consume too many resources. Do you want to proceed?\n 
-        [Server analysis recommended](https://docs.sonarqube.org/latest/analyzing-source-code/overview/)`,
+        [Server analysis recommended](https://docs.sonarsource.com/sonarqube-server/latest/analyzing-source-code/overview/)`,
     HotspotAnalysisConfirmation.RUN_ANALYSIS, HotspotAnalysisConfirmation.DONT_ANALYZE
   );
 }
@@ -70,7 +71,7 @@ export async function showSslCertificateConfirmationDialog(cert: SslCertificateC
     SHA-256:\n ${cert.sha256Fingerprint}\n
     SHA-1:\n ${cert.sha1Fingerprint}\n`;
   const dialogResponse = await vscode.window.showErrorMessage(`
-    SonarLint found untrusted server's certificate\n
+    SonarQube for VS Code found untrusted server's certificate\n
     Issued to:\n ${cert.issuedTo}\n
     Issued by:\n ${cert.issuedBy}\n
     VALIDITY PERIOD\n
@@ -87,4 +88,19 @@ export async function showSslCertificateConfirmationDialog(cert: SslCertificateC
 
 export function showNoActiveFileOpenWarning() {
   return window.showWarningMessage('At least one file needs to be open to use this command');
+}
+
+export function showNoFileWithUriError(uri: vscode.Uri) {
+  vscode.window
+  .showErrorMessage(
+    `Could not find file '${uri}' in the current workspace.
+Please make sure that the right folder is open and bound to the right project on the server,
+and that the file has not been removed or renamed.`,
+    'Show Documentation'
+  )
+  .then(action => {
+    if (action === 'Show Documentation') {
+      vscode.commands.executeCommand(Commands.OPEN_BROWSER, vscode.Uri.parse('https://docs.sonarsource.com/sonarqube-for-ide/vs-code/troubleshooting/#no-matching-issue-found'));
+    }
+  });
 }
