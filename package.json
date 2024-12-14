@@ -387,20 +387,20 @@
         "enablement": "view == SonarLint-abl.SecurityHotspots"
       },
       {
-        "command": "SonarLint.ConnectToSonarQube",
+        "command": "SonarLint.ABL.ConnectToSonarQube",
         "title": "Connect to SonarQube Server",
         "category": "ABL SonarQube",
         "icon": "$(plus)"
       },
       {
-        "command": "SonarLint.EditSonarQubeConnection",
+        "command": "SonarLint.ABL.EditSonarQubeConnection",
         "title": "Edit SonarQube Server Connection",
         "category": "ABL SonarQube",
         "icon": "$(pencil)",
         "enablement": "view == SonarLint-abl.ConnectedMode"
       },
       {
-        "command": "SonarLint.AddProjectBinding",
+        "command": "SonarLint.ABL.AddProjectBinding",
         "title": "Add Project Binding",
         "category": "ABL SonarQube",
         "icon": "$(plus)",
