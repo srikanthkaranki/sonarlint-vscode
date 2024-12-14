@@ -1,6 +1,6 @@
 {
   "name": "sonarlint-abl",
-  "displayName": "SonarQube for IDE",
+  "displayName": "CABL",
   "description": "Linter to detect & fix coding issues locally in ABL. Use with SonarQube Server for optimal team performance.",
   "version": "4.13.99001",
   "icon": "images/sonarlint_wave_128px.png",
