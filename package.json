@@ -468,7 +468,7 @@
         {
           "icon": "images/sonarlint.svg",
           "id": "SonarLintABL",
-          "title": "SonarQube - ABL"
+          "title": "CABL"
         }
       ]
     },
