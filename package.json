@@ -217,14 +217,14 @@
           "order": 90,
           "type": "boolean",
           "default": false,
-          "description": "Enable verbose log level in the SonarQube for IDE output.",
+          "description": "Enable verbose log level in the CABL output.",
           "scope": "window"
         },
         "sonarlint-abl.output.showAnalyzerLogs": {
           "order": 91,
           "type": "boolean",
           "default": false,
-          "description": "Show analyzer's logs in the SonarQube for IDE output.",
+          "description": "Show analyzer's logs in the CABL output.",
           "scope": "window"
         },
         "sonarlint-abl.analyzerProperties": {
@@ -299,7 +299,7 @@
     "commands": [
       {
         "command": "SonarLint.ABL.ShowSonarLintOutput",
-        "title": "Show SonarQube for IDE Output",
+        "title": "Show CABL Output",
         "category": "ABL SonarQube"
       },
       {
@@ -551,7 +551,7 @@
           {
             "id": "SonarLint.reachOut",
             "title": "$(comment-discussion) Share feedback or ask for help",
-            "description": "You suspect your code has issues but don't see any problems detected by SonarQube for VS Code? [Enable verbose logging](command:SonarLint.ABL.EnableVerboseLogs) and check the output in the SonarQube for IDE Output window\n[Check Output](command:SonarLint.ABL.ShowSonarLintOutput)\n\nYou'd like to learn more about SonarQube for VS Code, or give us feedback? Check out the [Help and Feedback view](command:SonarLint.ABL.HelpAndFeedback.focus)\n\n",
+            "description": "You suspect your code has issues but don't see any problems detected by SonarQube for VS Code? [Enable verbose logging](command:SonarLint.ABL.EnableVerboseLogs) and check the output in the CABL Output window\n[Check Output](command:SonarLint.ABL.ShowSonarLintOutput)\n\nYou'd like to learn more about SonarQube for VS Code, or give us feedback? Check out the [Help and Feedback view](command:SonarLint.ABL.HelpAndFeedback.focus)\n\n",
             "media": {
               "markdown": "walkthrough/empty.md"
             },
