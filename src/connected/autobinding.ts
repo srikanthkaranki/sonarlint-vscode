@@ -36,7 +36,7 @@ const CONFIGURE_BINDING_PROMPT_MESSAGE = `There are folders in your workspace th
       Do you want to configure binding?
       [Learn More](${SonarLintDocumentation.CONNECTED_MODE})`;
 
-const CONFIGURE_BINDING_MANUALLY_PROMPT_MESSAGE = `SonarQube for IDE could not find any binding suggestions for SonarQube (Server, Cloud) projects.
+const CONFIGURE_BINDING_MANUALLY_PROMPT_MESSAGE = `CABL could not find any binding suggestions for SonarQube (Server, Cloud) projects.
       Do you want to configure binding manually?
       [Learn More](${SonarLintDocumentation.CONNECTED_MODE})`;
 
