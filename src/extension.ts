@@ -199,8 +199,7 @@ export async function activate(context: VSCode.ExtensionContext) {
             ...(VSCode.env.isTelemetryEnabled && { machineId: VSCode.env.machineId })
           }
         },
-        enableNotebooks: true,
-        clientNodePath: VSCode.workspace.getConfiguration().get('sonarlint-abl.pathToNodeExecutable'),
+        enableNotebooks: true
       };
     },
     outputChannel: getLogOutput(),
@@ -592,9 +591,6 @@ function installCustomRequestHandlers(context: VSCode.ExtensionContext) {
   );
   languageClient.onNotification(protocol.OpenJavaHomeSettingsNotification.type, () =>
     VSCode.commands.executeCommand(Commands.OPEN_SETTINGS, JAVA_HOME_CONFIG)
-  );
-  languageClient.onNotification(protocol.OpenPathToNodeSettingsNotification.type, () =>
-    VSCode.commands.executeCommand(Commands.OPEN_SETTINGS, 'sonarlint-abl.pathToNodeExecutable')
   );
   languageClient.onNotification(protocol.BrowseToNotification.type, browseTo =>
     VSCode.commands.executeCommand(Commands.OPEN_BROWSER, VSCode.Uri.parse(browseTo))
