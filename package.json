@@ -187,12 +187,6 @@
           ],
           "scope": "resource"
         },
-        "sonarlint-abl.pathToCompileCommands": {
-          "order": 11,
-          "type": "string",
-          "markdownDescription": "Path to the active compilation database, e.g. `C:\\\\Repos\\\\MyProject\\\\compile_commands.json`",
-          "scope": "resource"
-        },
         "sonarlint-abl.testFilePattern": {
           "order": 12,
           "type": "string",
