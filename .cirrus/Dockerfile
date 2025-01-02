@@ -18,10 +18,10 @@ RUN apt-get update \
         libatk-bridge2.0-0 \
         libgtk-3-0 \
         libgbm1 \
-        libasound2 \
-        dotnet-runtime-7.0 \
-        dotnet-host-7.0 \
-        dotnet-sdk-7.0 \
+        libasound2t64 \
+        dotnet-runtime-8.0 \
+        dotnet-host-8.0 \
+        dotnet-sdk-8.0 \
     && apt-get clean
 
 COPY --chmod=755 .cirrus/xvfb /etc/init.d/
