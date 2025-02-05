@@ -1,6 +1,6 @@
 /* --------------------------------------------------------------------------------------------
  * SonarLint for VisualStudio Code
- * Copyright (C) 2017-2024 SonarSource SA
+ * Copyright (C) 2017-2025 SonarSource SA
  * sonarlint@sonarsource.com
  * Licensed under the LGPLv3 License. See LICENSE.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
@@ -39,7 +39,7 @@ function init() {
   byId('token').addEventListener('keyup', onChangeToken);
   byId('enableNotifications').addEventListener('change', onChangeEnableNotifications);
   byId('saveConnection').addEventListener('click', onClickSaveConnection);
-  byId('sonarCloudProductPage')?.addEventListener('click', onClickSonarCloudProductPage);
+  byId('sonarqubeCloudFreeSignUp')?.addEventListener('click', onClickSonarCloudFreeSignupLink);
   byId('sonarQubeEditionsDownloads')?.addEventListener('click', onClickSonarQubeDownloadsPage);
   tryRestoreState();
 }
@@ -175,8 +175,8 @@ function onClickSaveConnection() {
   vscode.postMessage(saveConnectionMessage);
 }
 
-function onClickSonarCloudProductPage() {
-  vscode.postMessage({ command: 'sonarCloudProductPageLinkClick' });
+function onClickSonarCloudFreeSignupLink() {
+  vscode.postMessage({ command: 'sonarCloudFreeSignupPageLinkClick' });
 }
 
 function onClickSonarQubeDownloadsPage() {

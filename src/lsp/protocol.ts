@@ -1,6 +1,6 @@
 /* --------------------------------------------------------------------------------------------
  * SonarLint for VisualStudio Code
- * Copyright (C) 2017-2024 SonarSource SA
+ * Copyright (C) 2017-2025 SonarSource SA
  * sonarlint@sonarsource.com
  * Licensed under the LGPLv3 License. See LICENSE.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
@@ -482,13 +482,17 @@ export interface Diagnostic extends lsp.Diagnostic {
   flows: Flow[];
 }
 
-export interface PublishHotspotsForFileParams {
+export interface PublishDiagnosticsParams {
   uri: string;
   diagnostics: Diagnostic[];
 }
 
 export namespace PublishHotspotsForFile {
-  export const type = new lsp.NotificationType<PublishHotspotsForFileParams>('sonarlint/publishSecurityHotspots');
+  export const type = new lsp.NotificationType<PublishDiagnosticsParams>('sonarlint/publishSecurityHotspots');
+}
+
+export namespace PublishTaintVulnerabilitiesForFile {
+  export const type = new lsp.NotificationType<PublishDiagnosticsParams>('sonarlint/publishTaintVulnerabilities');
 }
 
 export interface ShowHotspotLocationsParams {

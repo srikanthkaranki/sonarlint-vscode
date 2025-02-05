@@ -3,9 +3,9 @@ import { Command } from 'vscode';
 
 export interface HelpAndFeedbackItem {
   id: string;
-  label: string;
+  label?: string;
   url?: string;
-  icon: string;
+  icon?: string;
   viewItem: boolean;
   command?: Command;
 }
@@ -73,23 +73,17 @@ export const helpAndFeedbackItems: HelpAndFeedbackItem[] = [
   },
   {
     id: 'connectedModeDocs',
-    label: 'Connected Mode',
     url: 'https://docs.sonarsource.com/sonarqube-for-ide/vs-code/team-features/connected-mode/',
-    icon: 'n/a',
     viewItem: false
   },
   {
     id: 'compareServerProducts',
-    label: 'Compare SonarQube Server and SonarQube Cloud',
-    url: 'https://www.sonarsource.com/blog/sq-sc_guidance/',
-    icon: 'n/a',
+    url: 'https://www.sonarsource.com/plans-and-pricing/sonarcloud/',
     viewItem: false
   },
   {
     id: 'sonarQubeEditionsDownloads',
-    label: 'SonarQube Server Downloads',
     url: 'https://www.sonarsource.com/products/sonarqube/downloads/',
-    icon: 'n/a',
     viewItem: false
   }
 ];

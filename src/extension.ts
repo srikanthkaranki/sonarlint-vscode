@@ -1,6 +1,6 @@
 /* --------------------------------------------------------------------------------------------
  * SonarLint for VisualStudio Code
- * Copyright (C) 2017-2024 SonarSource SA
+ * Copyright (C) 2017-2025 SonarSource SA
  * sonarlint@sonarsource.com
  * Licensed under the LGPLv3 License. See LICENSE.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
@@ -61,7 +61,7 @@ import { getPlatform } from './util/platform';
 import { installManagedJre, JAVA_HOME_CONFIG, resolveRequirements } from './util/requirements';
 import { code2ProtocolConverter, protocol2CodeConverter } from './util/uri';
 import * as util from './util/util';
-import { filterOutFilesIgnoredForAnalysis, shouldAnalyseFile } from './util/util';
+import { filterOutFilesIgnoredForAnalysis, getSeverity, shouldAnalyseFile } from './util/util';
 import { resolveIssueMultiStepInput } from './issue/resolveIssue';
 import { IssueService } from './issue/issue';
 import { CAN_SHOW_MISSING_REQUIREMENT_NOTIF, showSslCertificateConfirmationDialog } from './util/showMessage';
@@ -93,6 +93,7 @@ let hotspotsTreeDataProvider: AllHotspotsTreeDataProvider;
 let allHotspotsView: VSCode.TreeView<HotspotTreeViewItem>;
 let helpAndFeedbackTreeDataProvider: HelpAndFeedbackTreeDataProvider;
 let helpAndFeedbackView: VSCode.TreeView<HelpAndFeedbackLink>;
+let taintVulnerabilityCollection: VSCode.DiagnosticCollection;
 
 function runJavaServer(context: VSCode.ExtensionContext): Promise<StreamInfo> {
   return resolveRequirements(context)
@@ -216,6 +217,9 @@ export async function activate(context: VSCode.ExtensionContext) {
   );
 
   await languageClient.start();
+
+  taintVulnerabilityCollection = VSCode.languages.createDiagnosticCollection('SonarQube Taint Vulnerabilities');
+  context.subscriptions.push(taintVulnerabilityCollection);
 
   ConnectionSettingsService.init(context, languageClient);
   NewCodeDefinitionService.init(context);
@@ -414,7 +418,9 @@ function registerCommands(context: VSCode.ExtensionContext) {
         prompt: 'Rule Key',
         validateInput: value => allRulesTreeDataProvider.checkRuleExists(value)
       });
-      await VSCode.commands.executeCommand(Commands.OPEN_RULE_BY_KEY, key);
+      if (key) {
+        await VSCode.commands.executeCommand(Commands.OPEN_RULE_BY_KEY, key);
+      }
     })
   );
   context.subscriptions.push(VSCode.commands.registerCommand(Commands.SHOW_SONARLINT_OUTPUT, () => showLogOutput()));
@@ -609,6 +615,24 @@ function installCustomRequestHandlers(context: VSCode.ExtensionContext) {
     await hotspotsTreeDataProvider.refresh(hotspotsPerFile);
     updateSonarLintViewContainerBadge();
   });
+  languageClient.onNotification(protocol.PublishTaintVulnerabilitiesForFile.type, async taintVulnerabilitiesPerFile => {
+    const diagnostics = taintVulnerabilitiesPerFile.diagnostics.map(diagnostic => {
+      const d = new VSCode.Diagnostic(
+        new VSCode.Range(
+          new VSCode.Position(diagnostic.range.start.line, diagnostic.range.start.character),
+          new VSCode.Position(diagnostic.range.end.line, diagnostic.range.end.character)
+        ),
+        diagnostic.message,
+        getSeverity(diagnostic.severity)
+      );
+      d.source = diagnostic.source;
+      d.code = diagnostic.code;
+      d['data'] = diagnostic.data;
+      return d;
+    });
+    taintVulnerabilityCollection.set(VSCode.Uri.parse(taintVulnerabilitiesPerFile.uri), diagnostics);
+  });
+
   languageClient.onRequest(
     protocol.AssistBinding.type,
     async params => await BindingService.instance.assistBinding(params)

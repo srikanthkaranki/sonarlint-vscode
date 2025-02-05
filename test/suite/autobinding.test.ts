@@ -1,6 +1,6 @@
 /* --------------------------------------------------------------------------------------------
  * SonarLint for VisualStudio Code
- * Copyright (C) 2017-2024 SonarSource SA
+ * Copyright (C) 2017-2025 SonarSource SA
  * sonarlint@sonarsource.com
  * Licensed under the LGPLv3 License. See LICENSE.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
@@ -410,7 +410,6 @@ suite('Auto Binding Test Suite', () => {
           .getConfiguration(SONARLINT_CATEGORY, folder.uri)
           .update(BINDING_SETTINGS, undefined, VSCode.ConfigurationTarget.WorkspaceFolder);
       }));
-      deleteSettingsFiles();
     });
 
     test('Should show binding suggestion notification', async () => {
@@ -439,7 +438,7 @@ suite('Auto Binding Test Suite', () => {
   });
 });
 
-async function deleteSettingsFiles() {
+async function cleanBindings() {
   const workspaceFolders = VSCode.workspace.workspaceFolders;
   if (workspaceFolders) {
     for (const folder of workspaceFolders) {
@@ -451,10 +450,4 @@ async function deleteSettingsFiles() {
       }
     }
   }
-}
-
-async function cleanBindings() {
-  return VSCode.workspace
-    .getConfiguration(SONARLINT_CATEGORY, VSCode.workspace.workspaceFolders[0].uri)
-    .update(BINDING_SETTINGS, undefined, VSCode.ConfigurationTarget.WorkspaceFolder);
 }

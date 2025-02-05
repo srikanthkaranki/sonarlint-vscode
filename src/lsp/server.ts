@@ -1,6 +1,6 @@
 /* --------------------------------------------------------------------------------------------
  * SonarLint for VisualStudio Code
- * Copyright (C) 2017-2024 SonarSource SA
+ * Copyright (C) 2017-2025 SonarSource SA
  * sonarlint@sonarsource.com
  * Licensed under the LGPLv3 License. See LICENSE.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
@@ -24,7 +24,7 @@ export function languageServerCommand(
 
   const params = [];
   if (DEBUG) {
-    params.push('-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8001,quiet=y');
+    params.push('-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000,quiet=y');
     params.push('-Dsonarlint.telemetry.disabled=true');
   }
   const vmargs = getSonarLintConfiguration().get('ls.vmargs', '');
@@ -34,6 +34,7 @@ export function languageServerCommand(
   params.push('-analyzers');
   // params.push(Path.resolve(context.extensionPath, 'analyzers', 'sonargo.jar'));
   // params.push(Path.resolve(context.extensionPath, 'analyzers', 'sonarjava.jar'));
+  // params.push(Path.resolve(context.extensionPath, 'analyzers', 'sonarjavasymbolicexecution.jar'));
   // params.push(Path.resolve(context.extensionPath, 'analyzers', 'sonarjs.jar'));
   // params.push(Path.resolve(context.extensionPath, 'analyzers', 'sonarphp.jar'));
   // params.push(Path.resolve(context.extensionPath, 'analyzers', 'sonarpython.jar'));

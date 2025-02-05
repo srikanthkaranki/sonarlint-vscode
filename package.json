@@ -2,7 +2,7 @@
   "name": "sonarlint-abl",
   "displayName": "CABL",
   "description": "Linter to detect & fix coding issues locally in ABL. Use with SonarQube Server for optimal team performance.",
-  "version": "4.14.99002",
+  "version": "4.15.99001",
   "icon": "images/sonarlint_wave_128px.png",
   "publisher": "RiversideSoftware",
   "homepage": "https://riverside-software.fr/",
@@ -750,13 +750,13 @@
     "analyzers"
   ],
   "scripts": {
-    "vscode:prepublish": "node scripts/prepare.mjs && webpack --mode production",
+    "vscode:prepublish": "node build-sonarlint/prepare.mjs && webpack --mode production",
     "compile": "tsc -p ./",
     "webpack": "webpack --mode development",
     "pretest": "webpack --mode development && tsc -p ./",
     "test": "node out/test/runTest.js",
     "test-cov": "node out/test/runTest.js --coverage",
-    "prepare": "node scripts/prepare.mjs",
+    "prepare": "node build-sonarlint/prepare.mjs",
     "cyclonedx-run": "cyclonedx-npm",
     "cyclonedx": "node build-sonarlint/sbomGeneration.mjs",
     "deploy-all": "node build-sonarlint/deployAll.mjs",
@@ -827,6 +827,9 @@
     "webpack-cli": "^5.1.4",
     "unzipper": "^0.12.3"
   },
+  "jarDependencies": [
+
+  ],
   "prettier": {
     "jsxBracketSameLine": true,
     "printWidth": 120,
