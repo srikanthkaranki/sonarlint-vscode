@@ -4,7 +4,7 @@
  * sonarlint@sonarsource.com
  * Licensed under the LGPLv3 License. See LICENSE.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-
+/* adding content just to see whether openhands gets triggered automatically */
 import { Context } from 'mocha';
 import * as util from '../src/util/util';
 
